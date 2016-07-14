@@ -1,0 +1,2393 @@
+CALPUFF test case run - 3 point sources
+24-Hour Simulation using CALMET met. data
+Gridded receptors on 17x17 20-km met grid
+---------------- Run title (3 lines) ------------------------------------------
+
+                    CALPUFF MODEL CONTROL FILE
+                    --------------------------
+
+-------------------------------------------------------------------------------
+
+INPUT GROUP: 0 -- Input and Output File Names
+
+--------------
+Default Name  Type          File Name
+------------  ----          ---------
+CALMET.DAT    input    ! METDAT = /hdfs/dmr/ca_arb-test/secaq22002.dat !
+    or
+ISCMET.DAT    input    * ISCDAT =             *
+    or
+PLMMET.DAT    input    * PLMDAT =             *
+    or
+PROFILE.DAT   input    * PRFDAT =             *
+SURFACE.DAT   input    * SFCDAT =             *
+RESTARTB.DAT  input    * RSTARTB=  rstart.dat   *
+--------------------------------------------------------------------------------
+CALPUFF.LST   output   * PUFLST =newberth.LST  *
+CONC.DAT      output   ! CONDAT =/n147/scratch/dmr/calpuff/parallel_test.con !
+DFLX.DAT      output   * DFDAT  =              *
+WFLX.DAT      output   * WFDAT  =              *
+
+VISB.DAT      output   * VISDAT =  vistest.dat       *
+RESTARTE.DAT  output   * RSTARTE=rstart.dat          *
+--------------------------------------------------------------------------------
+Emission Files
+--------------
+PTEMARB.DAT   input    * PTDAT  =             *
+VOLEMARB.DAT  input    * VOLDAT =             *
+BAEMARB.DAT   input    * ARDAT  =             *
+LNEMARB.DAT   input    * LNDAT  =             *
+--------------------------------------------------------------------------------
+Other Files
+-----------
+OZONE.DAT     input    * OZDAT  =             *
+VD.DAT        input    * VDDAT  =             *
+CHEM.DAT      input    * CHEMDAT=             *
+H2O2.DAT      input    * H2O2DAT=             *
+HILL.DAT      input    * HILDAT=             *
+HILLRCT.DAT   input    * RCTDAT=             *
+COASTLN.DAT   input    * CSTDAT=             *
+FLUXBDY.DAT   input    * BDYDAT=fluxbdy.dat  *
+BCON.DAT      input    * BCNDAT=             *
+DEBUG.DAT     output   * DEBUG = debug.dat   *
+MASSFLX.DAT   output   * FLXDAT=massflx.dat  *
+MASSBAL.DAT   output   * BALDAT=massbal.dat  *
+FOG.DAT       output   * FOGDAT=fogtest.dat  *
+--------------------------------------------------------------------------------
+All file names will be converted to lower case if LCFILES = T
+Otherwise, if LCFILES = F, file names will be converted to UPPER CASE
+         T = lower case      ! LCFILES = T !
+         F = UPPER CASE
+NOTE: (1) file/path names can be up to 70 characters in length
+
+
+Provision for multiple input files
+----------------------------------
+
+     Number of CALMET.DAT files for run (NMETDAT)
+                                     Default: 1       ! NMETDAT =   1   !
+
+     Number of PTEMARB.DAT files for run (NPTDAT)
+                                     Default: 0       ! NPTDAT =  0  !
+
+     Number of BAEMARB.DAT files for run (NARDAT)
+                                     Default: 0       ! NARDAT =  0  !
+
+     Number of VOLEMARB.DAT files for run (NVOLDAT)
+                                     Default: 0       ! NVOLDAT =  0  !
+
+!END!
+
+-------------
+Subgroup (0a)
+-------------
+
+  The following CALMET.DAT filenames are processed in sequence if NMETDAT>1
+
+Default Name  Type          File Name
+------------  ----          ---------
+
+
+--------------------------------------------------------------------------------
+
+INPUT GROUP: 1 -- General run control parameters
+--------------
+
+    Option to run all periods found
+    in the met. file     (METRUN)   Default: 0       ! METRUN =   0  !
+
+         METRUN = 0 - Run period explicitly defined below
+         METRUN = 1 - Run all periods in met. file
+
+     Starting date:   Year (IBYR) -- No default       ! IBYR =  2002  !
+     (used only if   Month (IBMO) -- No default       ! IBMO =  4  !
+      METRUN = 0)      Day (IBDY) -- No default       ! IBDY =  1  !
+                      Hour (IBHR) -- No default       ! IBHR =  1  !
+
+     Base time zone        (XBTZ) -- No default       ! XBTZ = 8.0  !
+        PST = 8., MST = 7.
+        CST = 6., EST = 5.
+
+     Length of run (hours) (IRLG) -- No default       ! IRLG =  192 !
+
+     Number of chemical species (NSPEC)
+                                     Default: 5       ! NSPEC =  7   !
+
+     Number of chemical species
+     to be emitted  (NSE)            Default: 3       ! NSE =  4   !
+
+     Flag to stop run after
+     SETUP phase (ITEST)             Default: 2       ! ITEST =  2   !
+     (Used to allow checking
+     of the model inputs, files, etc.)
+           ITEST = 1 - STOPS program after SETUP phase
+           ITEST = 2 - Continues with execution of program
+                       after SETUP
+
+     Restart Configuration:
+
+        Control flag (MRIESTART)      Default: 0       ! MRESTART =  0   !
+
+           0 = Do not read or write a restart file
+           1 = Read a restart file at the beginning of
+               the run
+           2 = Write a restart file during run
+           3 = Read a restart file at beginning of run
+               and write a restart file during run
+
+        Number of periods in Restart
+        output cycle (NRESPD)        Default: 0       ! NRESPD =  0   !
+
+           0 = File written only at last period
+          >0 = File updated every NRESPD periods
+
+     Meteorological Data Format (METFM)
+                                     Default: 1       ! METFM =  1   !
+
+           METFM = 1 - CALMET binary file (CALMET.MET)
+           METFM = 2 - ISC ASCII file (ISCMET.MET)
+           METFM = 3 - AUSPLUME ASCII file (PLMMET.MET)
+           METFM = 4 - CTDM plus tower file (PROFILE.DAT) and
+                       surface parameters file (SURFACE.DAT)
+
+     PG sigma-y is adjusted by the factor (AVET/PGTIME)**0.2
+     Averaging Time (minutes) (AVET)
+                                     Default: 60.0    ! AVET = 60. !
+     PG Averaging Time (minutes) (PGTIME)
+                                     Default: 60.0    ! PGTIME = 60. !
+
+
+!END!
+
+
+-------------------------------------------------------------------------------
+
+INPUT GROUP: 2 -- Technical options
+--------------
+
+
+     Vertical distribution used in the
+     near field (MGAUSS)                   Default: 1     ! MGAUSS =  1   !
+        0 = uniform
+        1 = Gaussian
+
+     Terrain adjustment method
+     (MCTADJ)                              Default: 3     ! MCTADJ =  1   !
+        0 = no adjustment
+        1 = ISC-type of terrain adjustment
+        2 = simple, CALPUFF-type of terrain
+            adjustment 
+        3 = partial plume path adjustment
+
+     Subgrid-scale complex terrain
+     flag (MCTSG)                          Default: 0     ! MCTSG =  0   !
+        0 = not modeled
+        1 = modeled
+
+     Near-field puffs modeled as
+     elongated 0 (MSLUG)                   Default: 0     ! MSLUG =  0   !
+        0 = no
+        1 = yes (slug model used)
+
+     Transitional plume rise modeled ?
+     (MTRANS)                              Default: 1     ! MTRANS =  1   !
+        0 = no  (i.e., final rise only)
+        1 = yes (i.e., transitional rise computed)
+
+     Stack tip downwash? (MTIP)            Default: 1     ! MTIP =  1  !
+        0 = no  (i.e., no stack tip downwash)
+        1 = yes (i.e., use stack tip downwash)
+
+     Method used to simulate building
+     downwash? (MBDW)                      Default: 1     ! MBDW =  2   !
+        1 = ISC method
+        2 = PRIME method
+
+     Vertical wind shear modeled above
+     stack top? (MSHEAR)                   Default: 0     ! MSHEAR =  0  !
+        0 = no  (i.e., vertical wind shear not modeled)
+        1 = yes (i.e., vertical wind shear modeled)
+
+     Puff splitting allowed? (MSPLIT)      Default: 0     ! MSPLIT =  0  !
+        0 = no (i.e., puffs not split)
+        1 = yes (i.e., puffs are split)
+
+     Chemical mechanism flag (MCHEM)       Default: 1     ! MCHEM =  1   !
+        0 = chemical transformation not
+            modeled
+        1 = transformation rates computed
+            internally (MESOPUFF II scheme)
+        2 = user-specified transformation
+            rates used
+        3 = transformation rates computed
+            internally (RIVAD/ARM3 scheme)
+        4 = secondary organic aerosol formation
+            computed (MESOPUFF II scheme for OH)
+
+     Aqueous phase transformation flag (MAQCHEM)
+     (Used only if MCHEM = 1, or 3)        Default: 0     ! MAQCHEM =  0   !
+        0 = aqueous phase transformation
+            not modeled
+        1 = transformation rates adjusted
+            for aqueous phase reactions
+
+     Wet removal modeled ? (MWET)          Default: 1     ! MWET =  1   !
+        0 = no
+        1 = yes
+
+     Dry deposition modeled ? (MDRY)       Default: 1     ! MDRY =  1   !
+        0 = no
+        1 = yes
+        (dry deposition method specified
+         for each species in Input Group 3)
+
+     Method used to compute dispersion
+     coefficients (MDISP)                  Default: 3     ! MDISP =  3   !
+
+        1 = dispersion coefficients computed from measured values
+            of turbulence, sigma v, sigma w
+        2 = dispersion coefficients from internally calculated 
+            sigma v, sigma w using micrometeorological variables
+            (u*, w*, L, etc.)
+        3 = PG dispersion coefficients for RURAL areas (computed using
+            the ISCST multi-segment approximation) and MP coefficients in
+            urban areas
+        4 = same as 3 except PG coefficients computed using
+            the MESOPUFF II eqns.
+        5 = CTDM sigmas used for stable and neutral conditions.
+            For unstable conditions, sigmas are computed as in
+            MDISP = 3, described above.  MDISP = 5 assumes that
+            measured values are read
+
+     Sigma-v/sigma-theta, sigma-w measurements used? (MTURBVW)
+     (Used only if MDISP = 1 or 5)         Default: 3     ! MTURBVW =  3  !
+        1 = use sigma-v or sigma-theta measurements
+            from PROFILE.DAT to compute sigma-y
+            (valid for METFM = 1, 2, 3, 4)
+        2 = use sigma-w measurements
+            from PROFILE.DAT to compute sigma-z
+            (valid for METFM = 1, 2, 3, 4)
+        3 = use both sigma-(v/theta) and sigma-w
+            from PROFILE.DAT to compute sigma-y and sigma-z
+            (valid for METFM = 1, 2, 3, 4)
+        4 = use sigma-theta measurements
+            from PLMMET.DAT to compute sigma-y
+            (valid only if METFM = 3)
+
+     Back-up method used to compute dispersion
+     when measured turbulence data are
+     missing (MDISP2)                      Default: 3     ! MDISP2 =  3  !
+     (used only if MDISP = 1 or 5)
+        2 = dispersion coefficients from internally calculated 
+            sigma v, sigma w using micrometeorological variables
+            (u*, w*, L, etc.)
+        3 = PG dispersion coefficients for RURAL areas (computed using
+            the ISCST multi-segment approximation) and MP coefficients in
+            urban areas
+        4 = same as 3 except PG coefficients computed using
+            the MESOPUFF II eqns.
+
+     PG sigma-y,z adj. for roughness?      Default: 0     ! MROUGH =  0  !
+     (MROUGH)
+        0 = no
+        1 = yes
+
+     Partial plume penetration of          Default: 1     ! MPARTL =  0  !
+     elevated inversion?
+     (MPARTL)
+        0 = no
+        1 = yes
+
+     Strength of temperature inversion     Default: 0     ! MTINV =  0  !
+     provided in PROFILE.DAT extended records?
+     (MTINV)
+        0 = no (computed from measured/default gradients)
+        1 = yes
+
+     PDF used for dispersion under convective conditions?
+                                           Default: 0     ! MPDF =  0  !
+     (MPDF)
+        0 = no
+        1 = yes
+
+     Sub-Grid TIBL module used for shore line?
+                                           Default: 0     ! MSGTIBL = 0  !
+     (MSGTIBL)
+        0 = no
+        1 = yes
+
+     Boundary conditions (concentration) modeled?
+                                           Default: 0     ! MBCON = 0  !
+     (MBCON)
+        0 = no
+        1 = yes, using formatted BCON.DAT file
+        2 = yes, using unformatted CONC.DAT file
+
+     Note:  MBCON > 0 requires that the last species modeled
+            be 'BCON'.  Mass is placed in species BCON when
+            generating boundary condition puffs so that clean
+            air entering the modeling domain can be simulated
+            in the same way as polluted air.  Specify zero
+            emission of species BCON for all regular sources.
+
+
+     Analyses of fogging and icing impacts due to emissions from
+     arrays of mechanically-forced cooling towers can be performed
+     using CALPUFF in conjunction with a cooling tower emissions
+     processor (CTEMISS) and its associated postprocessors.  Hourly
+     emissions of water vapor and temperature from each cooling tower
+     cell are computed for the current cell configuration and ambient
+     conditions by CTEMISS. CALPUFF models the dispersion of these
+     emissions and provides cloud information in a specialized format
+     for further analysis. Output to FOG.DAT is provided in either
+     'plume mode' or 'receptor mode' format.
+
+     Configure for FOG Model output?
+                                           Default: 0     ! MFOG =  0   !
+     (MFOG)
+        0 = no
+        1 = yes  - report results in PLUME Mode format
+        2 = yes  - report results in RECEPTOR Mode format
+
+
+     Test options specified to see if
+     they conform to regulatory
+     values? (MREG)                        Default: 1     ! MREG =  0   !
+
+        0 = NO checks are made
+        1 = Technical options must conform to USEPA
+            Long Range Transport (LRT) guidance
+                       METFM    1 or 2
+                       AVET     60. (min)
+                       PGTIME   60. (min)
+                       MGAUSS   1
+                       MCTADJ   3
+                       MTRANS   1
+                       MTIP     1
+                       MCHEM    1 or 3 (if modeling SOx, NOx)
+                       MWET     1
+                       MDRY     1
+                       MDISP    2 or 3
+                       MPDF     0 if MDISP=3
+                                1 if MDISP=2
+                       MROUGH   0
+                       MPARTL   1
+                       SYTDEP   550. (m)
+                       MHFTSZ   0
+
+
+!END!
+
+
+-------------------------------------------------------------------------------
+
+INPUT GROUP: 3a, 3b -- Species list
+-------------------
+
+------------
+Subgroup (3a)
+------------
+
+  The following species are modeled:
+
+! CSPEC =          SO2 !         !END!
+! CSPEC =          SO4 !         !END!
+! CSPEC =          NOX !         !END!
+! CSPEC =          HNO3 !         !END!
+! CSPEC =          NO3 !         !END!
+! CSPEC =          PM10 !         !END!
+! CSPEC =          NH3!         !END!
+
+                                                       Dry                OUTPUT GROUP
+    SPECIES          MODELED          EMITTED       DEPOSITED                NUMBER
+     NAME         (0=NO, 1=YES)    (0=NO, 1=YES)    (0=NO,                 (0=NONE,
+   (Limit: 12                                        1=COMPUTED-GAS        1=1st CGRUP,
+    Characters                                       2=COMPUTED-PARTICLE   2=2nd CGRUP,
+    in length)                                       3=USER-SPECIFIED)     3= etc.)
+
+!          SO2  =         1,               1,           1,                 0   !
+!          SO4  =         1,               0,           2,                 0   !
+!          NOX  =         1,               1,           1,                 0   !
+!          HNO3 =         1,               0,           1,                 0   !
+!          NO3  =         1,               0,           2,                 0   !
+!          PM10  =        1,               1,           2,                 0  !
+!          NH3 =          1,               1,           0,                 0  !
+
+!END!
+
+  Note:  The last species in (3a) must be 'BCON' when using the
+         boundary condition option (MBCON > 0).  Species BCON should
+         typically be modeled as inert (no chem transformation or
+         removal).
+
+
+-------------
+Subgroup (3b)
+-------------
+  The following names are used for Species-Groups in which results
+  for certain species are combined (added) prior to output.  The
+  CGRUP name will be used as the species name in output files.
+  Use this feature to model specific particle-size distributions
+  by treating each size-range as a separate species.
+  Order must be consistent with 3(a) above.
+
+
+
+-------------------------------------------------------------------------------
+
+
+INPUT GROUP: 4 -- Map Projection and Grid control parameters
+--------------
+
+     Projection for all (X,Y):
+     -------------------------
+
+     Map projection
+     (PMAP)                     Default: UTM    ! PMAP = lcc  !
+
+         UTM :  Universal Transverse Mercator
+         TTM :  Tangential Transverse Mercator
+         LCC :  Lambert Conformal Conic
+          PS :  Polar Stereographic
+          EM :  Equatorial Mercator
+        LAZA :  Lambert Azimuthal Equal Area
+
+     False Easting and Northing (km) at the projection origin
+     (Used only if PMAP= TTM, LCC, or LAZA)
+     (FEAST)                    Default=0.0     ! FEAST  = 0.000  !
+     (FNORTH)                   Default=0.0     ! FNORTH = 0.000  !
+
+     UTM zone (1 to 60)
+     (Used only if PMAP=UTM)
+     (IUTMZN)                   No Default      ! IUTMZN =  19   !
+
+     Hemisphere for UTM projection?
+     (Used only if PMAP=UTM)
+     (UTMHEM)                   Default: N      ! UTMHEM = N  !
+         N   :  Northern hemisphere projection
+         S   :  Southern hemisphere projection
+
+     Latitude and Longitude (decimal degrees) of projection origin
+     (Used only if PMAP= TTM, LCC, PS, EM, or LAZA)
+     (RLAT0)                    No Default      ! RLAT0 =  37.0N  !
+     (RLON0)                    No Default      ! RLON0 =  120.50W  !
+
+         TTM :  RLON0 identifies central (true N/S) meridian of projection
+                RLAT0 selected for convenience
+         LCC :  RLON0 identifies central (true N/S) meridian of projection
+                RLAT0 selected for convenience
+         PS  :  RLON0 identifies central (grid N/S) meridian of projection
+                RLAT0 selected for convenience
+         EM  :  RLON0 identifies central meridian of projection
+                RLAT0 is REPLACED by 0.0N (Equator)
+         LAZA:  RLON0 identifies longitude of tangent-point of mapping plane
+                RLAT0 identifies latitude of tangent-point of mapping plane
+
+     Matching parallel(s) of latitude (decimal degrees) for projection
+     (Used only if PMAP= LCC or PS)
+     (XLAT1)                    No Default      ! XLAT1 = 30N  !
+     (XLAT2)                    No Default      ! XLAT2 = 60N  !
+
+         LCC :  Projection cone slices through Earth's surface at XLAT1 and XLAT2
+         PS  :  Projection plane slices through Earth at XLAT1
+                (XLAT2 is not used)
+
+     ----------
+     Note:  Latitudes and longitudes should be positive, and include a
+            letter N,S,E, or W indicating north or south latitude, and
+            east or west longitude.  For example,
+            35.9  N Latitude  =  35.9N
+            118.7 E Longitude = 118.7E
+
+
+     Datum-region
+     ------------
+
+     The Datum-Region for the coordinates is identified by a character
+     string.  Many mapping products currently available use the model of the
+     Earth known as the World Geodetic System 1984 (WGS-G ).  Other local
+     models may be in use, and their selection in CALMET will make its output
+     consistent with local mapping products.  The list of Datum-Regions with
+     official transformation parameters is provided by the National Imagery and
+     Mapping Agency (NIMA).
+
+     NIMA Datum - Regions(Examples)
+     ------------------------------------------------------------------------------
+     WGS-G     WGS-84 GRS 80 Spheroid, Global coverage (WGS84)
+     NAS-C     NORTH AMERICAN 1927 Clarke 1866 Spheroid, MEAN FOR CONUS (NAD27)
+     NWS-27    NWS 6370KM Radius, Sphere
+     NWS-84    NWS 6370KM Radius, Sphere
+     ESR-S     ESRI REFERENCE 6371KM Radius, Sphere
+
+     Datum-region for output coordinates
+     (DATUM)                    Default: WGS-G     ! DATUM = NAS-C  !
+
+
+METEOROLOGICAL Grid:
+
+     Rectangular grid defined for projection PMAP,
+     with X the Easting and Y the Northing coordinate
+
+            No. X grid cells (NX)      No default     ! NX =  273   !
+            No. Y grid cells (NY)      No default     ! NY =  273   !
+         No. vertical layers (NZ)      No default     ! NZ =  12  !
+
+           Grid spacing (DGRIDKM)      No default     ! DGRIDKM = 4. !
+                                       Units: km
+
+                Cell face heights
+                    (ZFACE(nz+1))      No defaults
+                                       Units: m
+ ! ZFACE = 0.,20.,40.,80.,160.,300.,600.,1000.,1500.,2200.,3000.,4000.0,5000.0 !
+ 
+
+            Reference Coordinates
+           of SOUTHWEST corner of
+                 grid cell(1, 1):
+
+            X coordinate (XORIGKM)     No default     ! XORIGKM =  -497.132 !
+            Y coordinate (YORIGKM)     No default     ! YORIGKM =  -494.910 !
+                                      Units: km
+
+
+COMPUTATIONAL Grid:
+
+     The computational grid is identical to or a subset of the MET. grid.
+     The lower left (LL) corner of the computational grid is at grid point
+     (IBCOMP, JBCOMP) of the MET. grid.  The upper right (UR) corner of the
+     computational grid is at grid point (IECOMP, JECOMP) of the MET. grid.
+     The grid spacing of the computational grid is the same as the MET. grid.
+
+        X index of LL corner (IBCOMP)      No default     ! IBCOMP =  1   !
+                  (1 <= IBCOMP <= NX)
+
+        Y index of LL corner (JBCOMP)      No default     ! JBCOMP =  1   !
+                  (1 <= JBCOMP <= NY)
+
+
+        X index of UR corner (IECOMP)      No default     ! IECOMP =  273   !
+                  (1 <= IECOMP <= NX)
+
+        Y index of UR corner (JECOMP)      No default     ! JECOMP =  273   !
+                  (1 <= JECOMP <= NY)
+
+
+
+SAMPLING Grid (GRIDDED RECEPTORS):
+
+     The lower left (LL) corner of the sampling grid is at grid point
+     (IBSAMP, JBSAMP) of the MET. grid.  The upper right (UR) corner of the
+     sampling grid is at grid point (IESAMP, JESAMP) of the MET. grid.
+     The sampling grid must be identical to or a subset of the computational
+     grid.  It may be a nested grid inside the computational grid.
+     The grid spacing of the sampling grid is DGRIDKM/MESHDN.
+
+        Logical flag indicating if gridded
+        receptors are used (LSAMP)         Default: T     ! LSAMP = T !
+        (T=yes, F=no)
+
+        X index of LL corner (IBSAMP)      No default     ! IBSAMP =  1   !
+         (IBCOMP <= IBSAMP <= IECOMP)
+
+        Y index of LL corner (JBSAMP)      No default     ! JBSAMP =  1   !
+         (JBCOMP <= JBSAMP <= JECOMP)
+
+
+        X index of UR corner (IESAMP)      No default     ! IESAMP =  273   !
+         (IBCOMP <= IESAMP <= IECOMP)
+
+        Y index of UR corner (JESAMP)      No default     ! JESAMP =  273  !
+         (JBCOMP <= JESAMP <= JECOMP)
+
+
+       Nesting factor of the sampling
+        grid (MESHDN)                      Default: 1     ! MESHDN =  1  !
+        (MESHDN is an integer >= 1)
+
+!END!
+
+
+-------------------------------------------------------------------------------
+
+
+INPUT GROUP: 5 -- Output Options
+--------------
+                                             *                          *
+     FILE                       DEFAULT VALUE             VALUE THIS RUN
+     ----                       -------------             --------------
+
+   Concentrations (ICON)              1                   !  ICON =  1   !
+   Dry Fluxes (IDRY)                  1                   !  IDRY =  0   !
+   Wet Fluxes (IWET)                  1                   !  IWET =  0   !
+   2D Temperature (IT2D)              0                   !  IT2D =  0   !
+   2D Density (IRHO)                  0                   !  IRHO =  0   !
+   Relative Humidity (IVIS)           1                   !  IVIS =  0   !
+    (relative humidity file is
+     required for visibility
+     analysis)
+   Use data compression option in output file?
+   (LCOMPRS)                           Default: T         ! LCOMPRS = T !
+
+   *
+    0 = Do not create file, 1 = create file
+
+
+    DIAGNOSTIC MASS FLUX OUTPUT OPTIONS:
+
+       Mass flux across specified boundaries
+       for selected species reported hourly?
+       (IMFLX)                         Default: 0         ! IMFLX =  0  !
+         0 = no
+         1 = yes (FLUXBDY.DAT and MASSFLX.DAT filenames
+                  are specified in Input Group 0)
+
+       Mass balance for each species
+       reported hourly?
+       (IMBAL)                         Default: 0         ! IMBAL =  0  !
+         0 = no
+         1 = yes (MASSBAL.DAT filename is
+              specified in Input Group 0)
+
+
+    LINE PRINTER OUTPUT OPTIONS:
+
+       Print concentrations (ICPRT)    Default: 0         ! ICPRT =  0   !
+       Print dry fluxes (IDPRT)        Default: 0         ! IDPRT =  0   !
+       Print wet fluxes (IWPRT)        Default: 0         ! IWPRT =  0   !
+       (0 = Do not print, 1 = Print)
+
+       Concentration print interval
+       (ICFRQ) in hours                Default: 1         ! ICFRQ =  1   !
+       Dry flux print interval
+       (IDFRQ) in hours                Default: 1         ! IDFRQ =  1   !
+       Wet flux print interval
+       (IWFRQ) in hours                Default: 1         ! IWFRQ =  1   !
+
+       Units for Line Printer Output
+       (IPRTU)                         Default: 1         ! IPRTU =  1   !
+                       for            for
+                  Concentration    Deposition
+           1 =       g/m**3         g/m**2/s
+           2 =      mg/m**3        mg/m**2/s
+           3 =      ug/m**3        ug/m**2/s
+           4 =      ng/m**3        ng/m**2/s
+           5 =     Odour Units
+
+       Messages tracking progress of run
+       written to the screen ?
+       (IMESG)                         Default: 2         ! IMESG =  2   !
+         0 = no
+         1 = yes (advection step, puff ID)
+         2 = yes (YYYYJJJHH, # old puffs, # emitted puffs)
+
+
+     SPECIES (or GROUP for combined species) LIST FOR OUTPUT OPTIONS
+
+                 ---- CONCENTRATIONS ----   ------ DRY FLUXES ------   ------ WET FLUXES ------   -- MASS FLUX --
+   SPECIES
+   /GROUP        PRINTED?  SAVED ON DISK?   PRINTED?  SAVED ON DISK?   PRINTED?  SAVED ON DISK?   SAVED ON DISK?
+   -------       ------------------------   ------------------------   --------
+!          SO2 =     1,           1,           1,           1,           1,           1,           1   !
+!          SO4 =     1,           1,           1,           1,           1,           1,           1   !
+!          NOX =     1,           1,           1,           1,           1,           1,           1   !
+!          HNO3 =     1,           1,           1,           1,           1,          1,           1   !
+!          NO3 =     1,           1,           1,           1,           1,           1,           1   !
+!          PM10 =     1,           1,           1,          1,           1,           1,           1   !
+!          NH3 =     1,           1,           1,           1,           1,           1,           1   !
+----------------   ---------------
+
+
+  Note:  Species BCON (for MBCON > 0) does not need to be saved on disk.
+r
+
+
+     OPTIONS FOR PRINTING "DEBUG" QUANTITIES (much output)   
+
+       Logical for debug output
+       (LDEBUG)                                 Default: F     ! LDEBUG = F !
+
+       First puff to track
+       (IPFDEB)                                 Default: 1     ! IPFDEB =  1  !
+
+       Number of puffs to track
+       (NPFDEB)                                 Default: 1     ! NPFDEB =  10  !
+
+       Met. period to start output
+       (NN1)                                    Default: 1     ! NN1 =  1   !
+
+       Met. period to end output
+       (NN2)                                    Default: 10    ! NN2 =  10  !
+
+!END!
+
+
+-------------------------------------------------------------------------------
+
+
+INPUT GROUP: 6a, 6b, & 6c -- Subgrid scale complex terrain inputs
+-------------------------
+
+---------------
+Subgroup (6a)
+---------------
+       Number of terrain features (NHILL)       Default: 0     ! NHILL =  0   !
+
+       Number of special complex terrain
+       receptors  (NCTREC)                      Default: 0     ! NCTREC =  0   !
+
+       Terrain and CTSG Receptor data for 
+       CTSG hills input in CTDM format ?
+       (MHILL)                                  No Default     ! MHILL =  2   !
+       1 = Hill and Receptor data created
+           by CTDM processors & read from
+           HILL.DAT and HILLRCT.DAT files
+       2 = Hill data created by OPTHILL &
+           input below in Subgroup (6b);
+           Receptor data in Subgroup (6c)
+
+       Factor to convert horizontal dimensions  Default: 1.0   ! XHILL2M = 0. !
+       to meters (MHILL=1)
+
+       Factor to convert vertical dimensions    Default: 1.0   ! ZHILL2M = 0. !
+       to meters (MHILL=1)
+
+       X-origin of CTDM system relative to      No Default     ! XCTDMKM = 0.0E00 !
+       CALPUFF coordinate system, in Kilometers (MHILL=1)
+
+       Y-origin of CTDM system relative to      No Default     ! YCTDMKM = 0.0E00 !
+       CALPUFF coordinate system, in Kilometers (MHILL=1)
+
+! END !
+
+---------------
+Subgroup (6b)
+---------------
+
+                      1 **
+     HILL information
+
+
+HILL           XC        YC       THETAH  ZGRID  RELIEF    EXPO 1    EXPO 2   SCALE 1    SCALE 2    AMAX1     AMAX2
+ NO.          (km)      (km)      (deg.)   (m)     (m)      (m)       (m)       (m)        (m)       (m)       (m)
+----          ----      ----      ------  -----  ------    ------    ------   -------    -------    -----     -----
+
+---------------
+Subgroup (6c)
+---------------
+
+    COMPLEX TERRAIN RECEPTOR INFORMATION
+
+                      XRCT         YRCT        ZRCT          XHH
+                      (km)         (km)         (m)
+                     ------        -----      ------         ----
+
+-------------------
+1
+     Description of Complex Terrain Variables:
+          XC, YC  = Coordinates of center of hill
+          THETAH  = Orientation of major axis of hill (clockwise from
+                    North)
+          ZGRID   = Height of the  0  of the grid above mean sea
+                    level
+          RELIEF  = Height of the crest of the hill above the grid elevation
+          EXPO 1  = Hill-shape exponent for the major axis
+          EXPO 2  = Hill-shape exponent for the major axis
+          SCALE 1 = Horizontal length scale along the major axis
+          SCALE 2 = Horizontal length scale along the minor axis
+          AMAX    = Maximum allowed axis length for the major axis
+          BMAX    = Maximum allowed axis length for the major axis
+
+          XRCT, YRCT = Coordinates of the complex terrain receptors
+          ZRCT    = Height of the ground (MSL) at the complex terrain
+                    Receptor
+          XHH     = Hill number associated with each complex terrain receptor
+                    (NOTE: MUST BE ENTERED AS A REAL NUMBER)
+
+   **
+     NOTE: DATA for each hill and CTSG receptor are treated as a separate
+           input subgroup and therefore must end with an input group terminator.
+
+-------------------------------------------------------------------------------
+
+
+INPUT GROUP: 7 -- Chemical parameters for dry deposition of gases
+--------------
+
+      SPECIES     DIFFUSIVITY      ALPHA STAR      REACTIVITY    MESOPHYLL RESISTANCE     HENRY'S LAW COEFFICIENT
+       NAME        (cm**2/s)                                            (s/cm)                (dimensionless)
+      -------     -----------      ----------      ----------    --------------------     -----------------------
+       !    SO2  =        0.1509,          1000.,           8.,              0.,                       4.0E-02   !
+       !    NOX  =        0.1656,             1.,           8.,              5.,                       3.5       !
+       !    HNO3 =        0.1628,             1.,          18.,              0.,                       8.05E-08  !
+
+
+!END!
+
+
+-------------------------------------------------------------------------------
+
+
+INPUT GROUP: 8 -- Size parameters for dry deposition of particles
+--------------
+
+     For SINGLE SPECIES, the mean and standard deviation are used to
+     compute a deposition velocity for NINT (see group 9) size-ranges,
+     and these are then averaged to obtain a mean deposition velocity.
+
+     For GROUPED SPECIES, the size distribution should be explicitly
+     specified (by the 'species' in the group), and the standard deviation
+     for each should be entered as 0.  The model will then use the
+     deposition velocity for the stated mean diameter.
+
+      SPECIES      GEOMETRIC MASS MEAN        GEOMETRIC STANDARD
+       NAME             DIAMETER                   DEVIATION
+                        (microns)                  (microns)
+      -------      -------------------        ------------------
+!      SO4  =               0.48,                     2.0    !
+!      NO3  =               0.48,                     2.0    !
+!      PM10 =               0.10,                     0.0    !
+
+
+!END!
+
+
+-------------------------------------------------------------------------------
+
+
+INPUT GROUP: 9 -- Miscellaneous dry deposition parameters
+--------------
+
+     Reference cuticle resistance (s/cm)
+     (RCUTR)                           Default: 30    !  RCUTR = 30.0 !
+     Reference ground resistance  (s/cm)
+     (RGR)                             Default: 10    !    RGR = 10.0 !
+     Reference pollutant reactivity
+     (REACTR)                          Default: 8     ! REACTR = 8.0 !
+
+     Number of particle-size intervals used to 
+     evaluate effective particle deposition velocity
+     (NINT)                            Default: 9     !   NINT =  9  !
+
+     Vegetation state in unirrigated areas
+     (IVEG)                            Default: 1     !   IVEG =  1   !
+        IVEG=1 for active and unstressed vegetation
+        IVEG=2 for active and stressed vegetation
+        IVEG=3 for inactive vegetation
+
+!END!
+
+
+-------------------------------------------------------------------------------
+
+
+INPUT GROUP: 10 -- Wet Deposition Parameters
+---------------
+
+                                                          
+                      Scavenging Coefficient -- Units: (sec)**(-1)
+
+       Pollutant      Liquid Precip.       Frozen Precip.
+       ---------      --------------       --------------
+!       SO2   =           3.0E-05,             0.              !
+!       NOX   =           0.,                  0.              !
+!       HNO3  =           6.0E-05,             0.              !
+!       SO4   =           1.0E-04,             3.0E-05         !
+!       NO3   =           1.0E-04,             3.0E-05         !
+!       PM10  =           1.0E-04,             3.0E-05         !
+
+!END!
+
+
+-------------------------------------------------------------------------------
+
+
+INPUT GROUP: 11 -- Chemistry Parameters
+---------------
+
+     Ozone data input option (MOZ)     Default: 1            ! MOZ =  0   !
+     (Used only if MCHEM = 1, 3, or 4)
+        0 = use a monthly background ozone value
+        1 = read hourly ozone concentrations from
+            the OZONE.DAT data file
+
+     Monthly ozone concentrations
+     (Used only if MCHEM = 1, 3, or 4 and 
+      MOZ = 0 or MOZ = 1 and all hourly O3 data missing)
+     (BCKO3) in ppb                    Default: 12*80.
+     !  BCKO3 = 30.00, 30.00, 30.00, 30.00, 30.00, 30.00, 30.00, 30.00, 30.00, 30.00, 30.00, 30.00 !
+
+     Monthly ammonia concentrations
+     (Used only if MCHEM = 1, or 3)
+     (BCKNH3) in ppb                   Default: 12*10.       
+     !  BCKNH3 = 12*0.10 !
+
+     Nighttime SO2 loss rate (RNITE1)
+     in percent/hour                   Default: 0.2          ! RNITE1 = .2 !
+
+     Nighttime NOx loss rate (RNITE2)
+     in percent/hour                   Default: 2.0          ! RNITE2 = 2.0 !
+
+     Nighttime HNO3 formation rate (RNITE3)
+     in percent/hour                   Default: 2.0          ! RNITE3 = 2.0 !
+
+     H2O2 data input option (MH2O2)    Default: 1            ! MH2O2 =  1   !
+     (Used only if MAQCHEM = 1)
+        0 = use a monthly background H2O2 value
+        1 = read hourly H2O2 concentrations from
+            the H2O2.DAT data file
+
+     Monthly H2O2 concentrations
+     (Used only if MQACHEM = 1 and
+      MH2O2 = 0 or MH2O2 = 1 and all hourly H2O2 data missing)
+     (BCKH2O2) in ppb                  Default: 12*1.        
+     !  BCKH2O2 = 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00 !
+
+
+ --- Data for SECONDARY ORGANIC AEROSOL (SOA) Option
+     (used only if MCHEM = 4)
+
+     The SOA module uses monthly values of:
+          Fine particulate concentration in ug/m^3 (BCKPMF)
+          Organic fraction of fine particulate     (OFRAC)
+          VOC / NOX ratio (after reaction)         (VCNX)
+     to characterize the air mass when computing
+     the formation of SOA from VOC emissions.
+     Typical values for several distinct air mass types are:
+
+        Month    1    2    3    4    5    6    7    8    9   10   11   12
+                Jan  Feb  Mar  Apr  May  Jun  Jul  Aug  Sep  Oct  Nov  Dec
+
+     Clean Continental
+        BCKPMF   1.   1.   1.   1.   1.   1.   1.   1.   1.   1.   1.   1.
+        OFRAC  .15  .15  .20  .20  .20  .20  .20  .20  .20  .20  .20  .15
+        VCNX    50.  50.  50.  50.  50.  50.  50.  50.  50.  50.  50.  50.
+
+     Clean Marine (surface)
+        BCKPMF  .5   .5   .5   .5   .5   .5   .5   .5   .5   .5   .5   .5
+        OFRAC  .25  .25  .30  .30  .30  .30  .30  .30  .30  .30  .30  .25
+        VCNX    50.  50.  50.  50.  50.  50.  50.  50.  50.  50.  50.  50.
+
+     Urban - low biogenic (controls present)
+        BCKPMF  30.  30.  30.  30.  30.  30.  30.  30.  30.  30.  30.  30.
+        OFRAC  .20  .20  .25  .25  .25  .25  .25  .25  .20  .20  .20  .20
+        VCNX     4.   4.   4.   4.   4.   4.   4.   4.   4.   4.   4.   4.
+
+     Urban - high biogenic (controls present)
+        BCKPMF  60.  60.  60.  60.  60.  60.  60.  60.  60.  60.  60.  60.
+        OFRAC  .25  .25  .30  .30  .30  .55  .55  .55  .35  .35  .35  .25
+        VCNX    15.  15.  15.  15.  15.  15.  15.  15.  15.  15.  15.  15.
+
+     Regional Plume
+        BCKPMF  20.  20.  20.  20.  20.  20.  20.  20.  20.  20.  20.  20.
+        OFRAC  .20  .20  .25  .35  .25  .40  .40  .40  .30  .30  .30  .20
+        VCNX    15.  15.  15.  15.  15.  15.  15.  15.  15.  15.  15.  15.
+
+     Urban - no controls present
+        BCKPMF 100. 100. 100. 100. 100. 100. 100. 100. 100. 100. 100. 100.
+        OFRAC  .30  .30  .35  .35  .35  .55  .55  .55  .35  .35  .35  .30
+        VCNX     2.   2.   2.   2.   2.   2.   2.   2.   2.   2.   2.   2.
+
+     Default: Clean Continental
+     !  BCKPMF = 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00 !
+     !  OFRAC  = 0.15, 0.15, 0.20, 0.20, 0.20, 0.20, 0.20, 0.20, 0.20, 0.20, 0.20, 0.15 !
+     !  VCNX   = 50.00, 50.00, 50.00, 50.00, 50.00, 50.00, 50.00, 50.00, 50.00, 50.00, 50.00, 50.00 !
+
+
+!END!
+
+
+-------------------------------------------------------------------------------
+
+
+INPUT GROUP: 12 -- Misc. Dispersion and Computational Parameters
+---------------
+
+     Horizontal size of puff (m) beyond which
+     time-dependent dispersion equations (Heffter)
+     are used to determine sigma-y and
+     sigma-z (SYTDEP)                           Default: 550.   ! SYTDEP = 5.5E02 !
+
+     Switch for using Heffter equation for sigma z           
+     as above (0 = Not use Heffter; 1 = use Heffter
+     (MHFTSZ)                                   Default: 0      ! MHFTSZ =  0   !
+
+     Stability class used to determine plume
+     growth rates for puffs above the boundary
+     layer (JSUP)                               Default: 5      ! JSUP =  5   !
+
+     Vertical dispersion constant for stable
+     conditions (k1 in Eqn. 2.7-3)  (CONK1)     Default: 0.01   ! CONK1 = .01 !
+
+     Vertical dispersion constant for neutral/
+     unstable conditions (k2 in Eqn. 2.7-4)
+     (CONK2)                                    Default: 0.1    ! CONK2 = .1 !
+
+     Factor for determining Transition-point from
+     Schulman-Scire to Huber-Snyder Building Downwash
+     scheme (SS used for Hs < Hb + TBD * HL)
+     (TBD)                                      Default: 0.5    ! TBD = .5 !
+        TBD < 0   ==> always use Huber-Snyder
+        TBD = 1.5 ==> always use Schulman-Scire
+        TBD = 0.5 ==> ISC Transition-point
+
+     Range of land use categories for which
+     urban dispersion is assumed
+     (IURB1, IURB2)                             Default: 10     ! IURB1 =  10  !
+                                                         19     ! IURB2 =  19  !
+
+     Site characterization parameters for single-point Met data files ---------
+     (needed for METFM = 2,3,4)
+
+        Land use category for modeling domain
+        (ILANDUIN)                              Default: 20     ! ILANDUIN =  20  !
+
+        Roughness length (m) for modeling domain
+        (Z0IN)                                  Default: 0.25   ! Z0IN = .25 !
+
+        Leaf area index for modeling domain
+        (XLAIIN)                                Default: 3.0    ! XLAIIN = 3.0 !
+
+        Elevation above sea level (m)
+        (ELEVIN)                                Default: 0.0    ! ELEVIN = .0 !
+
+        Latitude (degrees) for met location
+        (XLATIN)                                Default: -999.  ! XLATIN = -999.0 !
+
+        Longitude (degrees) for met location
+        (XLONIN)                                Default: -999.  ! XLONIN = -999.0 !
+
+     Specialized information for interpreting single-point Met data files -----
+
+        Anemometer height (m) (Used only if METFM = 2,3)
+        (ANEMHT)                                Default: 10.    ! ANEMHT = 10.0 !
+
+        Form of lateral turbulance data in PROFILE.DAT file
+        (Used only if METFM = 4 or MTURBVW = 1 or 3)
+        (ISIGMAV)                               Default: 1      ! ISIGMAV =  1  !
+            0 = read sigma-theta
+            1 = read sigma-v
+
+        Choice of mixing heights (Used only if METFM = 4)
+        (IMIXCTDM)                              Default: 0      ! IMIXCTDM =  0  !
+            0 = read PREDICTED mixing heights
+            1 = read OBSERVED mixing heights
+
+     Maximum length of a slug (met. grid units)
+     (XMXLEN)                                   Default: 1.0    ! XMXLEN = 1.0 !
+
+     Maximum travel distance of a puff/slug (in
+     grid units) during one sampling step
+     (XSAMLEN)                                  Default: 1.0    ! XSAMLEN = 1.0 !
+
+     Maximum Number of slugs/puffs release from
+     one source during one time step            
+     (MXNEW)                                    Default: 99     ! MXNEW =  1   !
+
+     Maximum Number of sampling steps for    
+     one puff/slug during one time step             
+     (MXSAM)                                    Default: 99     ! MXSAM =  1   !
+
+     Number of iterations used when computing
+     the transport wind for a sampling step
+     that includes gradual rise (for CALMET
+     and PROFILE winds)
+     (NCOUNT)                                   Default: 2      ! NCOUNT =  2   !
+
+     Minimum sigma y for a new puff/slug (m)      
+     (SYMIN)                                    Default: 1.0    ! SYMIN = 1.0  !
+
+     Minimum sigma z for a new puff/slug (m)     
+     (SZMIN)                                    Default: 1.0    ! SZMIN = 1.0  !
+
+     Default minimum turbulence velocities sigma-v and sigma-w                                                                      
+     for each stability class over land and over water (m/s)                                                                        
+     (SVMIN(12) and SWMIN(12))                                                                                                      
+                                                                                                                                     
+                      ----------  LAND  ----------       ---------  WATER  ----------                                                
+         Stab Class :  A    B    C    D    E    F         A    B    C    D    E    F                                                 
+                      ---  ---  ---  ---  ---  ---       ---  ---  ---  ---  ---  ---                                                
+      Default SVMIN : .50, .50, .50, .50, .50, .50,      .37, .37, .37, .37, .37, .37                                                
+      Default SWMIN : .20, .12, .08, .06, .03, .016,     .20, .12, .08, .06, .03, .016                                               
+                                                                                                                                     
+            ! SVMIN = 0.500, 0.500, 0.500, 0.500, 0.500, 0.500, 0.370, 0.370, 0.370, 0.370, 0.370, 0.370!                            
+            ! SWMIN = 0.200, 0.120, 0.080, 0.060, 0.030, 0.016, 0.200, 0.120, 0.080, 0.060, 0.030, 0.016!                            
+
+     Divergence criterion for dw/dz across puff
+     used to initiate adjustment for horizontal
+     convergence (1/s)
+     Partial adjustment starts at CDIV(1), and
+     full adjustment is reached at CDIV(2)
+     (CDIV(2))                                  Default: 0.0,0.0  ! CDIV = .01, .01 !
+
+     Minimum wind speed (m/s) allowed for
+     non-calm conditions. Also used as minimum
+     speed returned when using power-law 
+     extrapolation toward surface
+     (WSCALM)                                   Default: 0.5    ! WSCALM = .5 !
+
+     Maximum mixing height (m)                      
+     (XMAXZI)                                   Default: 3000.  ! XMAXZI = 3000.0 !
+
+     Minimum mixing height (m)                     
+     (XMINZI)                                   Default: 50.    ! XMINZI = 50.0 !
+
+     Default wind speed classes --
+     5 upper bounds (m/s) are entered;
+     the 6th class has no upper limit
+     (WSCAT(5))                      Default   : 
+                                     ISC RURAL : 1.54, 3.09, 5.14, 8.23, 10.8 (10.8+)
+
+                              Wind Speed Class :  1     2     3     4     5  
+                                                 ---   ---   ---   ---   --- 
+                                       ! WSCAT = 1.54, 3.09, 5.14, 8.23, 10.80 !
+
+     Default wind speed profile power-law
+     exponents for stabilities 1-6
+     (PLX0(6))                       Default   : ISC RURAL values
+                                     ISC RURAL : .07, .07, .10, .15, .35, .55
+                                     ISC URBAN : .15, .15, .20, .25, .30, .30
+
+                               Stability Class :  A     B     C     D     E     F
+                                                 ---   ---   ---   ---   ---   ---
+                                        ! PLX0 = 0.07, 0.07, 0.10, 0.15, 0.35, 0.55 !
+
+     Default potential temperature gradient
+     for stable classes E, F (degK/m)
+     (PTG0(2))                       Default: 0.020, 0.035
+                                        ! PTG0 = 0.020,   0.035 !
+
+     Default plume path coefficients for
+     each stability class (used when option
+     for partial plume height terrain adjustment
+     is selected -- MCTADJ=3)
+     (PPC(6))                  Stability Class :  A     B     C     D     E     F
+                                  Default  PPC : .50,  .50,  .50,  .50,  .35,  .35
+                                                 ---   ---   ---   ---   ---   ---
+                                        !  PPC = 0.50, 0.50, 0.50, 0.50, 0.35, 0.35 !
+
+     Slug-to-puff transition criterion factor
+     equal to sigma-y/length of slug
+     (SL2PF)                               Default: 10.        ! SL2PF = 5.0 !
+
+     Puff-splitting control variables ------------------------
+
+       VERTICAL SPLIT
+       --------------
+
+       Number of puffs that result every time a puff
+       is split - nsplit=2 means that 1 puff splits
+       into 2
+       (NSPLIT)                            Default:   3        ! NSPLIT =  3  !
+
+       Time(s) of a day when split puffs are eligible to
+       be split once again; this is typically set once
+       per day, around sunset before nocturnal shear develops.
+       24 values: 0 is midnight (00:00) and 23 is 11 PM (23:00)
+       0=do not re-split    1=eligible for re-split
+       (IRESPLIT(24))                      Default:  Hour 17 = 1
+       !  IRESPLIT = 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0 !
+
+       Split is allowed only if last hour's mixing
+       height (m) exceeds a minimum value
+       (ZISPLIT)                           Default: 100.       ! ZISPLIT = 100.0 !
+
+       Split is allowed only if ratio of last hour's
+       mixing ht to the maximum mixing ht experienced
+       by the puff is less than a maximum value (this
+       postpones a split until a nocturnal layer develops)
+       (ROLDMAX)                           Default: 0.25       ! ROLDMAX = 0.25 !
+
+
+       HORIZONTAL SPLIT
+       ----------------
+
+       Number of puffs that result every time a puff
+       is split - nsplith=5 means that 1 puff splits
+       into 5
+       (NSPLITH)                           Default:   5        ! NSPLITH =  5  !
+
+       Minimum sigma-y (Grid Cells Units) of puff
+       before it may be split
+       (SYSPLITH)                          Default:  1.0       ! SYSPLITH = 1.0 !
+
+       Minimum puff elongation rate (SYSPLITH/hr) due to
+       wind shear, before it may be split
+       (SHSPLITH)                          Default:  2.        ! SHSPLITH = 2.0 !
+
+       Minimum concentration (g/m^3) of each
+       species in puff before it may be split
+       Enter array of NSPEC values; if a single value is
+       entered, it will be used for ALL species
+       (CNSPLITH)                          Default:  1.0E-07   ! CNSPLITH = 1.0E-07 !
+
+     Integration control variables ------------------------
+
+       Fractional convergence criterion for numerical SLUG
+       sampling integration
+       (EPSSLUG)                           Default:   1.0e-04  ! EPSSLUG = 1.0E-04 !
+
+       Fractional convergence criterion for numerical AREA
+       source integration
+       (EPSAREA)                           Default:   1.0e-06  ! EPSAREA = 1.0E-06 !
+
+       Trajectory step-length (m) used for numerical rise
+       integration
+       (DSRISE)                            Default:   1.0      ! DSRISE = 1.0 !
+
+     Boundary Condition (BC) Puff control variables ------------------------
+
+       Minimum height (m) to which BC puffs are mixed as they are emitted
+       (MBCON=2 ONLY).  Actual height is reset to the current mixing height
+       at the release point if greater than this minimum.
+       (HTMINBC)                           Default:   500.     ! HTMINBC = 500. !
+
+       Search radius (km) about a receptor for sampling nearest BC puff.
+       BC puffs are typically emitted with a spacing of one grid cell
+       length, so the search radius should be greater than DGRIDKM.
+       (RSAMPBC)                           Default:   10.      ! RSAMPBC = 15. !
+
+       Near-Surface depletion adjustment to concentration profile used when
+       sampling BC puffs?
+       (MDEPBC)                            Default:   1        ! MDEPBC = 0. !
+          0 = Concentration is NOT adjusted for depletion
+          1 = Adjust Concentration for depletion
+
+!END!
+
+
+-------------------------------------------------------------------------------
+
+
+INPUT GROUPS: 13a, 13b, 13c, 13d -- Point source parameters
+--------------------------------
+
+---------------
+Subgroup (13a)
+---------------
+
+     Number of point sources with
+     parameters provided below      (NPT1)  No default  !  NPT1 =  0  !
+
+     Units used for point source
+     emissions below                (IPTU)  Default: 1  !  IPTU =   1  !
+           1 =        g/s
+           2 =       kg/hr
+           3 =       lb/hr
+           4 =     tons/yr
+           5 =     Odour Unit * m**3/s  (vol. flux of odour compound)
+           6 =     Odour Unit * m**3/min
+           7 =     metric tons/yr
+
+     Number of source-species
+     combinations with variable
+     emissions scaling factors
+     provided below in (13d)        (NSPT1) Default: 0  !  NSPT1 =  0  !
+
+     Number of point sources with
+     variable emission parameters
+     provided in external file      (NPT2)  No default  !  NPT2 =  0  !
+
+     (If NPT2 > 0, these point
+     source emissions are read from
+     the file: PTEMARB.DAT)
+
+!END!
+
+---------------
+Subgroup (13b)
+---------------
+                                      a
+          POINT SOURCE: CONSTANT DATA
+          -----------------------------
+                                                                              b          c
+  Source      X UTM     Y UTM     Stack   Base     Stack    Exit  Exit    Bldg.  Emission
+   No.     Coordinate Coordinate Height Elevation Diameter  Vel.  Temp.   Dwash   Rates
+              (km)      (km)       (m)      (m)       (m)  (m/s) (deg. K)         
+  ------   ---------- ---------- ------  ------   -------- ----- -------- ----- --------
+   1 * SRCNAM = 1 *
+   1 * X =    .0,   3.0,    65.0,    .0,       3.5,  12.6,  330.0,   .0, 1.0E01 *
+   1 * FMFAC  =      1.0 *   *END*
+
+--------
+
+    a
+     Data for each source are treated as a separate input subgroup
+     and therefore must end with an input group terminator.
+
+     SRCNAM  is a 12-character name for a source
+             (No default)
+     X       is an array holding the source data listed by the column headings
+             (No default)
+     SIGYZI  is an array holding the initial sigma-y and sigma-z (m)
+             (Default: 0.,0.)
+     FMFAC   is a vertical momentum flux factor (0. or 1.0) used to represent
+             the effect of rain-caps or other physical configurations that
+             reduce momentum rise associated with the actual exit velocity.
+             (Default: 1.0  -- full momentum used)
+
+    b
+     0. = No building downwash modeled, 1. = downwash modeled
+     NOTE: must be entered as a REAL number (i.e., with decimal point)
+
+    c
+     An emission rate must be entered for every pollutant modeled.
+     Enter emission rate of zero for secondary pollutants that are
+     modeled, but not emitted.  Units are specified by IPTU
+     (e.g. 1 for g/s).
+
+---------------
+Subgroup (13c)
+---------------
+
+           BUILDING DIMENSION DATA FOR SOURCES SUBJECT TO DOWNWASH
+           -------------------------------------------------------
+Source                                                                       a
+ No.       Effective building height, width, length and X/Y offset (in meters)
+           every 10 degrees.  LENGTH, XBADJ, and YBADJ are only needed for
+           MBDW=2 (PRIME downwash option)
+------     -------------------------------------------------------------------
+
+ 1    * SRCNAM  =   1 *
+ 1    * HEIGHT  =  50.0,   50.0,   50.0,   50.0,   50.0,   50.0,   
+                   50.0,   50.0,   50.0,   50.0,   50.0,   50.0,   
+                   50.0,   50.0,   50.0,   50.0,   50.0,   50.0,   
+                   50.0,   50.0,   50.0,   50.0,   50.0,   50.0,   
+                   50.0,   50.0,   50.0,   50.0,   50.0,   50.0,   
+                   50.0,   50.0,   50.0,   50.0,   50.0,   50.0 *
+ 1    * WIDTH  =   62.26,   72.64,   80.8,   86.51,   89.59,   89.95,   
+                   87.58,   82.54,   75.0,   82.54,   87.58,   89.95,   
+                   89.59,   86.51,   80.8,   72.64,   62.26,   50.0,   
+                   62.26,   72.64,   80.8,   86.51,   89.59,   89.95,   
+                   87.58,   82.54,   75.0,   82.54,   87.58,   89.95,   
+                   89.59,   86.51,   80.8,   72.64,   62.26,   50.0 *
+ 1  *  LENGTH =  82.54,  87.58,  89.95,  89.59,  86.51,  80.80, 
+                 72.64,  62.26,  50.00,  62.26,  72.64,  80.80, 
+                 86.51,  89.59,  89.95,  87.58,  82.54,  75.00, 
+                 82.54,  87.58,  89.95,  89.59,  86.51,  80.80, 
+                 72.64,  62.26,  50.00,  62.26,  72.64,  80.80, 
+                 86.51,  89.59,  89.95,  87.58,  82.54,  75.00 *
+ 1  *  XBADJ =  -47.35, -55.76, -62.48, -67.29, -70.07, -70.71, 
+                -69.21, -65.60, -60.00, -65.60, -69.21, -70.71, 
+                -70.07, -67.29, -62.48, -55.76, -47.35, -37.50, 
+                -35.19, -31.82, -27.48, -22.30, -16.44, -10.09, 
+                 -3.43,   3.34,  10.00,   3.34,  -3.43, -10.09, 
+                -16.44, -22.30, -27.48, -31.82, -35.19, -37.50 *
+ 1  *  YBADJ =   34.47,  32.89,  30.31,  26.81,  22.50,  17.50, 
+                 11.97,   6.08,   0.00,  -6.08, -11.97, -17.50, 
+                -22.50, -26.81, -30.31, -32.89, -34.47, -35.00, 
+                -34.47, -32.89, -30.31, -26.81, -22.50, -17.50, 
+                -11.97,  -6.08,   0.00,   6.08,  11.97,  17.50, 
+                 22.50,  26.81,  30.31,  32.89,  34.47,  35.00 *
+*END*
+
+--------
+
+    a
+     Building height, width, length, and X/Y offset from the source are treated
+     as a separate input subgroup for each source and therefore must end with
+     an input group terminator.
+
+---------------
+Subgroup (13d)
+---------------
+                                                a
+          POINT SOURCE: VARIABLE EMISSIONS DATA
+          ---------------------------------------
+
+     Use this subgroup to describe temporal variations in the emission
+     rates given in 13b.  Factors entered multiply the rates in 13b.
+     Skip sources here that have constant emissions.  For more elaborate
+     variation in source parameters, use PTEMARB.DAT and NPT2 > 0.
+
+     IVARY determines the type of variation, and is source-specific:
+     (IVARY)                                Default: 0
+           0 =       Constant
+           1 =       Diurnal cycle (24 scaling factors: hours 1-24)
+           2 =       Monthly cycle (12 scaling factors: months 1-12)
+           3 =       Hour & Season (4 groups of 24 hourly scaling factors,
+                                    where first group is DEC-JAN-FEB)
+           4 =       Speed & Stab. (6 groups of 6 scaling factors, where
+                                    first group is Stability Class A,
+                                    and the speed classes have upper
+                                    bounds (m/s) defined in Group 12
+           5 =       Temperature   (12 scaling factors, where temperature
+                                    classes have upper bounds (C) of:
+                                    0, 5, 10, 15, 20, 25, 30, 35, 40,
+                                    45, 50, 50+)
+
+
+
+--------
+    a
+     Data for each species are treated as a separate input subgroup
+     and therefore must end with an input group terminator.
+
+
+-------------------------------------------------------------------------------
+
+
+INPUT GROUPS: 14a, 14b, 14c, 14d -- Area source parameters
+--------------------------------
+
+---------------
+Subgroup (14a)
+---------------
+
+     Number of polygon area sources with
+     parameters specified below (NAR1)       No default  !  NAR1 =  100  !
+
+     Units used for area source
+     emissions below            (IARU)       Default: 1  !  IARU =   1  !
+           1 =        g/m**2/s
+           2 =       kg/m**2/hr
+           3 =       lb/m**2/hr
+           4 =     tons/m**2/yr
+           5 =     Odour Unit * m/s  (vol. flux/m**2 of odour compound)
+           6 =     Odour Unit * m/min
+           7 =     metric tons/m**2/yr
+
+     Number of source-species
+     combinations with variable
+     emissions scaling factors
+     provided below in (14d)        (NSAR1) Default: 0  !  NSAR1 =  0  !
+
+     Number of buoyant polygon area sources
+     with variable location and emission
+     parameters (NAR2)                      No default  !  NAR2 =  0   !
+     (If NAR2 > 0, ALL parameter data for
+     these sources are read from the file: BAEMARB.DAT)
+
+!END!
+
+---------------
+Subgroup (14b)
+---------------
+                                     a
+          AREA SOURCE: CONSTANT DATA
+          ----------------------------
+                                                         b
+Source           Effect.    Base      Initial    Emission
+ No.             Height   Elevation   Sigma z     Rates
+                   (m)       (m)        (m)      
+-------          ------    ------     --------   ---------
+
+    1! SRCNAM = 00001  !
+    1! X =  50.0000,  0.0000, 25.0000,0.2279E-07,0.0000E+00,0.3697E-07,0.0000E+00,0.0000E+00,0.3212E-08,0.4051E-10  !  !END!
+    2! SRCNAM = 00002  !
+    2! X =  50.0000,  0.0000, 25.0000,0.1630E-07,0.0000E+00,0.2719E-07,0.0000E+00,0.0000E+00,0.2326E-08,0.2966E-10  !  !END!
+    3! SRCNAM = 00003  !
+    3! X =  50.0000,  0.0000, 25.0000,0.3310E-07,0.0000E+00,0.5436E-07,0.0000E+00,0.0000E+00,0.4676E-08,0.6004E-10  !  !END!
+    4! SRCNAM = 00004  !
+    4! X =  50.0000,  0.0000, 25.0000,0.2968E-07,0.0000E+00,0.4874E-07,0.0000E+00,0.0000E+00,0.4192E-08,0.5353E-10  !  !END!
+    5! SRCNAM = 00005  !
+    5! X =  50.0000,  0.0000, 25.0000,0.1745E-07,0.0000E+00,0.2882E-07,0.0000E+00,0.0000E+00,0.2467E-08,0.3183E-10  !  !END!
+    6! SRCNAM = 00006  !
+    6! X =  50.0000,  0.0000, 25.0000,0.1579E-07,0.0000E+00,0.2639E-07,0.0000E+00,0.0000E+00,0.2242E-08,0.2894E-10  !  !END!
+    7! SRCNAM = 00007  !
+    7! X =  50.0000,  0.0000, 25.0000,0.5933E-07,0.0000E+00,0.9771E-07,0.0000E+00,0.0000E+00,0.8438E-08,0.1078E-09  !  !END!
+    8! SRCNAM = 00008  !
+    8! X =  50.0000,  0.0000, 25.0000,0.7097E-07,0.0000E+00,0.1167E-06,0.0000E+00,0.0000E+00,0.1008E-07,0.1288E-09  !  !END!
+    9! SRCNAM = 00009  !
+    9! X =  50.0000,  0.0000, 25.0000,0.2444E-07,0.0000E+00,0.4084E-07,0.0000E+00,0.0000E+00,0.3477E-08,0.4485E-10  !  !END!
+   10! SRCNAM = 00010  !
+   10! X =  50.0000,  0.0000, 25.0000,0.2296E-07,0.0000E+00,0.3757E-07,0.0000E+00,0.0000E+00,0.3254E-08,0.4123E-10  !  !END!
+   11! SRCNAM = 00011  !
+   11! X =  50.0000,  0.0000, 25.0000,0.1848E-06,0.0000E+00,0.3044E-06,0.0000E+00,0.0000E+00,0.2629E-07,0.3349E-09  !  !END!
+   12! SRCNAM = 00012  !
+   12! X =  50.0000,  0.0000, 25.0000,0.2967E-07,0.0000E+00,0.4873E-07,0.0000E+00,0.0000E+00,0.4192E-08,0.5353E-10  !  !END!
+   13! SRCNAM = 00013  !
+   13! X =  50.0000,  0.0000, 25.0000,0.2587E-07,0.0000E+00,0.4196E-07,0.0000E+00,0.0000E+00,0.3646E-08,0.4630E-10  !  !END!
+   14! SRCNAM = 00014  !
+   14! X =  50.0000,  0.0000, 25.0000,0.3907E-07,0.0000E+00,0.6393E-07,0.0000E+00,0.0000E+00,0.5537E-08,0.7017E-10  !  !END!
+   15! SRCNAM = 00015  !
+   15! X =  50.0000,  0.0000, 25.0000,0.2336E-07,0.0000E+00,0.3797E-07,0.0000E+00,0.0000E+00,0.3294E-08,0.4196E-10  !  !END!
+   16! SRCNAM = 00016  !
+   16! X =  50.0000,  0.0000, 25.0000,0.2157E-07,0.0000E+00,0.3530E-07,0.0000E+00,0.0000E+00,0.3057E-08,0.3906E-10  !  !END!
+   17! SRCNAM = 00017  !
+   17! X =  50.0000,  0.0000, 25.0000,0.9555E-07,0.0000E+00,0.1581E-06,0.0000E+00,0.0000E+00,0.1363E-07,0.1736E-09  !  !END!
+   18! SRCNAM = 00018  !
+   18! X =  50.0000,  0.0000, 25.0000,0.2841E-07,0.0000E+00,0.4666E-07,0.0000E+00,0.0000E+00,0.4013E-08,0.5136E-10  !  !END!
+   19! SRCNAM = 00019  !
+   19! X =  50.0000,  0.0000, 25.0000,0.1677E-07,0.0000E+00,0.2771E-07,0.0000E+00,0.0000E+00,0.2371E-08,0.3038E-10  !  !END!
+   20! SRCNAM = 00020  !
+   20! X =  50.0000,  0.0000, 25.0000,0.9036E-07,0.0000E+00,0.1493E-06,0.0000E+00,0.0000E+00,0.1287E-07,0.1642E-09  !  !END!
+   21! SRCNAM = 00021  !
+   21! X =  50.0000,  0.0000, 25.0000,0.3562E-07,0.0000E+00,0.5945E-07,0.0000E+00,0.0000E+00,0.5137E-08,0.6510E-10  !  !END!
+   22! SRCNAM = 00022  !
+   22! X =  50.0000,  0.0000, 25.0000,0.5397E-07,0.0000E+00,0.8913E-07,0.0000E+00,0.0000E+00,0.7687E-08,0.9838E-10  !  !END!
+   23! SRCNAM = 00023  !
+   23! X =  50.0000,  0.0000, 25.0000,0.1879E-07,0.0000E+00,0.3151E-07,0.0000E+00,0.0000E+00,0.2858E-08,0.3472E-10  !  !END!
+   24! SRCNAM = 00024  !
+   24! X =  50.0000,  0.0000, 25.0000,0.1755E-07,0.0000E+00,0.2845E-07,0.0000E+00,0.0000E+00,0.2472E-08,0.3111E-10  !  !END!
+   25! SRCNAM = 00025  !
+   25! X =  50.0000,  0.0000, 25.0000,0.3009E-07,0.0000E+00,0.5025E-07,0.0000E+00,0.0000E+00,0.4290E-08,0.5498E-10  !  !END!
+   26! SRCNAM = 00026  !
+   26! X =  50.0000,  0.0000, 25.0000,0.2969E-07,0.0000E+00,0.4877E-07,0.0000E+00,0.0000E+00,0.4195E-08,0.5353E-10  !  !END!
+   27! SRCNAM = 00027  !
+   27! X =  50.0000,  0.0000, 25.0000,0.2969E-07,0.0000E+00,0.4876E-07,0.0000E+00,0.0000E+00,0.4194E-08,0.5353E-10  !  !END!
+   28! SRCNAM = 00028  !
+   28! X =  50.0000,  0.0000, 25.0000,0.4455E-07,0.0000E+00,0.7336E-07,0.0000E+00,0.0000E+00,0.6336E-08,0.8102E-10  !  !END!
+   29! SRCNAM = 00029  !
+   29! X =  50.0000,  0.0000, 25.0000,0.2318E-07,0.0000E+00,0.3761E-07,0.0000E+00,0.0000E+00,0.3268E-08,0.4123E-10  !  !END!
+   30! SRCNAM = 00030  !
+   30! X =  50.0000,  0.0000, 25.0000,0.1654E-07,0.0000E+00,0.2733E-07,0.0000E+00,0.0000E+00,0.2356E-08,0.3038E-10  !  !END!
+   31! SRCNAM = 00031  !
+   31! X =  50.0000,  0.0000, 25.0000,0.8610E-07,0.0000E+00,0.1406E-06,0.0000E+00,0.0000E+00,0.1221E-07,0.1548E-09  !  !END!
+   32! SRCNAM = 00032  !
+   32! X =  50.0000,  0.0000, 25.0000,0.8594E-07,0.0000E+00,0.1404E-06,0.0000E+00,0.0000E+00,0.1219E-07,0.1541E-09  !  !END!
+   33! SRCNAM = 00033  !
+   33! X =  50.0000,  0.0000, 25.0000,0.8613E-07,0.0000E+00,0.1407E-06,0.0000E+00,0.0000E+00,0.1221E-07,0.1548E-09  !  !END!
+   34! SRCNAM = 00034  !
+   34! X =  50.0000,  0.0000, 25.0000,0.3861E-07,0.0000E+00,0.6305E-07,0.0000E+00,0.0000E+00,0.5475E-08,0.6944E-10  !  !END!
+   35! SRCNAM = 00035  !
+   35! X =  50.0000,  0.0000, 25.0000,0.6945E-07,0.0000E+00,0.1136E-06,0.0000E+00,0.0000E+00,0.9855E-08,0.1251E-09  !  !END!
+   36! SRCNAM = 00036  !
+   36! X =  50.0000,  0.0000, 25.0000,0.1618E-07,0.0000E+00,0.2647E-07,0.0000E+00,0.0000E+00,0.2293E-08,0.2894E-10  !  !END!
+   37! SRCNAM = 00037  !
+   37! X =  50.0000,  0.0000, 25.0000,0.1244E-06,0.0000E+00,0.2056E-06,0.0000E+00,0.0000E+00,0.1772E-07,0.2264E-09  !  !END!
+   38! SRCNAM = 00038  !
+   38! X =  50.0000,  0.0000, 25.0000,0.2591E-07,0.0000E+00,0.4203E-07,0.0000E+00,0.0000E+00,0.3652E-08,0.4630E-10  !  !END!
+   39! SRCNAM = 00039  !
+   39! X =  50.0000,  0.0000, 25.0000,0.1753E-07,0.0000E+00,0.2876E-07,0.0000E+00,0.0000E+00,0.2486E-08,0.3183E-10  !  !END!
+   40! SRCNAM = 00040  !
+   40! X =  50.0000,  0.0000, 25.0000,0.6944E-07,0.0000E+00,0.1136E-06,0.0000E+00,0.0000E+00,0.9854E-08,0.1251E-09  !  !END!
+   41! SRCNAM = 00041  !
+   41! X =  50.0000,  0.0000, 25.0000,0.2588E-07,0.0000E+00,0.4198E-07,0.0000E+00,0.0000E+00,0.3647E-08,0.4630E-10  !  !END!
+   42! SRCNAM = 00042  !
+   42! X =  50.0000,  0.0000, 25.0000,0.2249E-07,0.0000E+00,0.3674E-07,0.0000E+00,0.0000E+00,0.3190E-08,0.4051E-10  !  !END!
+   43! SRCNAM = 00043  !
+   43! X =  50.0000,  0.0000, 25.0000,0.1856E-07,0.0000E+00,0.3065E-07,0.0000E+00,0.0000E+00,0.2643E-08,0.3400E-10  !  !END!
+   44! SRCNAM = 00044  !
+   44! X =  50.0000,  0.0000, 25.0000,0.1524E-07,0.0000E+00,0.2336E-07,0.0000E+00,0.0000E+00,0.2501E-08,0.2604E-10  !  !END!
+   45! SRCNAM = 00045  !
+   45! X =  50.0000,  0.0000, 25.0000,0.6198E-08,0.0000E+00,0.1896E-07,0.0000E+00,0.0000E+00,0.2359E-08,0.2098E-10  !  !END!
+   46! SRCNAM = 00046  !
+   46! X =  50.0000,  0.0000, 25.0000,0.1709E-07,0.0000E+00,0.2780E-07,0.0000E+00,0.0000E+00,0.2409E-08,0.3038E-10  !  !END!
+   47! SRCNAM = 00047  !
+   47! X =  50.0000,  0.0000, 25.0000,0.1900E-07,0.0000E+00,0.3176E-07,0.0000E+00,0.0000E+00,0.2697E-08,0.3472E-10  !  !END!
+   48! SRCNAM = 00048  !
+   48! X =  50.0000,  0.0000, 25.0000,0.1235E-06,0.0000E+00,0.2040E-06,0.0000E+00,0.0000E+00,0.1759E-07,0.2242E-09  !  !END!
+   49! SRCNAM = 00049  !
+   49! X =  50.0000,  0.0000, 25.0000,0.8618E-07,0.0000E+00,0.1407E-06,0.0000E+00,0.0000E+00,0.1222E-07,0.1548E-09  !  !END!
+   50! SRCNAM = 00050  !
+   50! X =  50.0000,  0.0000, 25.0000,0.7095E-07,0.0000E+00,0.1167E-06,0.0000E+00,0.0000E+00,0.1008E-07,0.1280E-09  !  !END!
+   51! SRCNAM = 00051  !
+   51! X =  50.0000,  0.0000, 25.0000,0.7010E-07,0.0000E+00,0.1155E-06,0.0000E+00,0.0000E+00,0.9971E-08,0.1273E-09  !  !END!
+   52! SRCNAM = 00052  !
+   52! X =  50.0000,  0.0000, 25.0000,0.1436E-06,0.0000E+00,0.2365E-06,0.0000E+00,0.0000E+00,0.2120E-07,0.2604E-09  !  !END!
+   53! SRCNAM = 00053  !
+   53! X =  50.0000,  0.0000, 25.0000,0.9304E-07,0.0000E+00,0.1541E-06,0.0000E+00,0.0000E+00,0.1327E-07,0.1693E-09  !  !END!
+   54! SRCNAM = 00054  !
+   54! X =  50.0000,  0.0000, 25.0000,0.7136E-07,0.0000E+00,0.1167E-06,0.0000E+00,0.0000E+00,0.1013E-07,0.1280E-09  !  !END!
+   55! SRCNAM = 00055  !
+   55! X =  50.0000,  0.0000, 25.0000,0.6159E-07,0.0000E+00,0.1024E-06,0.0000E+00,0.0000E+00,0.8782E-08,0.1128E-09  !  !END!
+   56! SRCNAM = 00056  !
+   56! X =  50.0000,  0.0000, 25.0000,0.1235E-06,0.0000E+00,0.2040E-06,0.0000E+00,0.0000E+00,0.1758E-07,0.2242E-09  !  !END!
+   57! SRCNAM = 00057  !
+   57! X =  50.0000,  0.0000, 25.0000,0.3845E-07,0.0000E+00,0.6306E-07,0.0000E+00,0.0000E+00,0.5451E-08,0.6944E-10  !  !END!
+   58! SRCNAM = 00058  !
+   58! X =  50.0000,  0.0000, 25.0000,0.1333E-06,0.0000E+00,0.2202E-06,0.0000E+00,0.0000E+00,0.1899E-07,0.2423E-09  !  !END!
+   59! SRCNAM = 00059  !
+   59! X =  50.0000,  0.0000, 25.0000,0.5754E-07,0.0000E+00,0.1632E-06,0.0000E+00,0.0000E+00,0.2005E-07,0.1794E-09  !  !END!
+   60! SRCNAM = 00060  !
+   60! X =  50.0000,  0.0000, 25.0000,0.3130E-07,0.0000E+00,0.5288E-07,0.0000E+00,0.0000E+00,0.4466E-08,0.5787E-10  !  !END!
+   61! SRCNAM = 00061  !
+   61! X =  50.0000,  0.0000, 25.0000,0.3131E-07,0.0000E+00,0.5290E-07,0.0000E+00,0.0000E+00,0.4468E-08,0.5787E-10  !  !END!
+   62! SRCNAM = 00062  !
+   62! X =  50.0000,  0.0000, 25.0000,0.3839E-07,0.0000E+00,0.6296E-07,0.0000E+00,0.0000E+00,0.5443E-08,0.6944E-10  !  !END!
+   63! SRCNAM = 00063  !
+   63! X =  50.0000,  0.0000, 25.0000,0.1655E-07,0.0000E+00,0.2735E-07,0.0000E+00,0.0000E+00,0.2340E-08,0.3038E-10  !  !END!
+   64! SRCNAM = 00064  !
+   64! X =  50.0000,  0.0000, 25.0000,0.3415E-07,0.0000E+00,0.5082E-07,0.0000E+00,0.0000E+00,0.4737E-08,0.5570E-10  !  !END!
+   65! SRCNAM = 00065  !
+   65! X =  50.0000,  0.0000, 25.0000,0.2970E-07,0.0000E+00,0.4878E-07,0.0000E+00,0.0000E+00,0.4196E-08,0.5353E-10  !  !END!
+   66! SRCNAM = 00066  !
+   66! X =  50.0000,  0.0000, 25.0000,0.4330E-07,0.0000E+00,0.7130E-07,0.0000E+00,0.0000E+00,0.6158E-08,0.7812E-10  !  !END!
+   67! SRCNAM = 00067  !
+   67! X =  50.0000,  0.0000, 25.0000,0.1544E-07,0.0000E+00,0.2503E-07,0.0000E+00,0.0000E+00,0.2176E-08,0.2749E-10  !  !END!
+   68! SRCNAM = 00068  !
+   68! X =  50.0000,  0.0000, 25.0000,0.7109E-07,0.0000E+00,0.1183E-06,0.0000E+00,0.0000E+00,0.1063E-07,0.1302E-09  !  !END!
+   69! SRCNAM = 00069  !
+   69! X =  50.0000,  0.0000, 25.0000,0.2325E-07,0.0000E+00,0.3974E-07,0.0000E+00,0.0000E+00,0.3409E-08,0.4340E-10  !  !END!
+   70! SRCNAM = 00070  !
+   70! X =  50.0000,  0.0000, 25.0000,0.1907E-07,0.0000E+00,0.3188E-07,0.0000E+00,0.0000E+00,0.2708E-08,0.3472E-10  !  !END!
+   71! SRCNAM = 00071  !
+   71! X =  50.0000,  0.0000, 25.0000,0.1744E-06,0.0000E+00,0.2873E-06,0.0000E+00,0.0000E+00,0.2481E-07,0.3161E-09  !  !END!
+   72! SRCNAM = 00072  !
+   72! X =  50.0000,  0.0000, 25.0000,0.3846E-07,0.0000E+00,0.6290E-07,0.0000E+00,0.0000E+00,0.5457E-08,0.6944E-10  !  !END!
+   73! SRCNAM = 00073  !
+   73! X =  50.0000,  0.0000, 25.0000,0.6435E-07,0.0000E+00,0.1051E-06,0.0000E+00,0.0000E+00,0.9125E-08,0.1157E-09  !  !END!
+   74! SRCNAM = 00074  !
+   74! X =  50.0000,  0.0000, 25.0000,0.8606E-07,0.0000E+00,0.1405E-06,0.0000E+00,0.0000E+00,0.1220E-07,0.1548E-09  !  !END!
+   75! SRCNAM = 00075  !
+   75! X =  50.0000,  0.0000, 25.0000,0.3829E-07,0.0000E+00,0.6281E-07,0.0000E+00,0.0000E+00,0.5429E-08,0.6944E-10  !  !END!
+   76! SRCNAM = 00076  !
+   76! X =  50.0000,  0.0000, 25.0000,0.3837E-07,0.0000E+00,0.6293E-07,0.0000E+00,0.0000E+00,0.5441E-08,0.6944E-10  !  !END!
+   77! SRCNAM = 00077  !
+   77! X =  50.0000,  0.0000, 25.0000,0.1463E-06,0.0000E+00,0.2410E-06,0.0000E+00,0.0000E+00,0.2081E-07,0.2648E-09  !  !END!
+   78! SRCNAM = 00078  !
+   78! X =  50.0000,  0.0000, 25.0000,0.2590E-07,0.0000E+00,0.4201E-07,0.0000E+00,0.0000E+00,0.3649E-08,0.4630E-10  !  !END!
+   79! SRCNAM = 00079  !
+   79! X =  50.0000,  0.0000, 25.0000,0.6821E-07,0.0000E+00,0.1122E-06,0.0000E+00,0.0000E+00,0.9690E-08,0.1237E-09  !  !END!
+   80! SRCNAM = 00080  !
+   80! X =  50.0000,  0.0000, 25.0000,0.1906E-07,0.0000E+00,0.3186E-07,0.0000E+00,0.0000E+00,0.2706E-08,0.3472E-10  !  !END!
+   81! SRCNAM = 00081  !
+   81! X =  50.0000,  0.0000, 25.0000,0.7060E-07,0.0000E+00,0.1166E-06,0.0000E+00,0.0000E+00,0.1006E-07,0.1280E-09  !  !END!
+   82! SRCNAM = 00082  !
+   82! X =  50.0000,  0.0000, 25.0000,0.1745E-06,0.0000E+00,0.2873E-06,0.0000E+00,0.0000E+00,0.2481E-07,0.3161E-09  !  !END!
+   83! SRCNAM = 00083  !
+   83! X =  50.0000,  0.0000, 25.0000,0.3302E-07,0.0000E+00,0.5456E-07,0.0000E+00,0.0000E+00,0.4703E-08,0.6004E-10  !  !END!
+   84! SRCNAM = 00084  !
+   84! X =  50.0000,  0.0000, 25.0000,0.7096E-07,0.0000E+00,0.1167E-06,0.0000E+00,0.0000E+00,0.1008E-07,0.1280E-09  !  !END!
+   85! SRCNAM = 00085  !
+   85! X =  50.0000,  0.0000, 25.0000,0.6943E-07,0.0000E+00,0.1135E-06,0.0000E+00,0.0000E+00,0.9852E-08,0.1251E-09  !  !END!
+   86! SRCNAM = 00086  !
+   86! X =  50.0000,  0.0000, 25.0000,0.5441E-07,0.0000E+00,0.8960E-07,0.0000E+00,0.0000E+00,0.7739E-08,0.9838E-10  !  !END!
+   87! SRCNAM = 00087  !
+   87! X =  50.0000,  0.0000, 25.0000,0.1542E-07,0.0000E+00,0.2500E-07,0.0000E+00,0.0000E+00,0.2173E-08,0.2749E-10  !  !END!
+   88! SRCNAM = 00088  !
+   88! X =  50.0000,  0.0000, 25.0000,0.1630E-07,0.0000E+00,0.2641E-07,0.0000E+00,0.0000E+00,0.2297E-08,0.2894E-10  !  !END!
+   89! SRCNAM = 00089  !
+   89! X =  50.0000,  0.0000, 25.0000,0.1528E-07,0.0000E+00,0.2576E-07,0.0000E+00,0.0000E+00,0.2173E-08,0.2821E-10  !  !END!
+   90! SRCNAM = 00090  !
+   90! X =  50.0000,  0.0000, 25.0000,0.1545E-07,0.0000E+00,0.2505E-07,0.0000E+00,0.0000E+00,0.2177E-08,0.2749E-10  !  !END!
+   91! SRCNAM = 00091  !
+   91! X =  50.0000,  0.0000, 25.0000,0.1058E-06,0.0000E+00,0.1742E-06,0.0000E+00,0.0000E+00,0.1505E-07,0.1917E-09  !  !END!
+   92! SRCNAM = 00092  !
+   92! X =  50.0000,  0.0000, 25.0000,0.1566E-07,0.0000E+00,0.2587E-07,0.0000E+00,0.0000E+00,0.2214E-08,0.2821E-10  !  !END!
+   93! SRCNAM = 00093  !
+   93! X =  50.0000,  0.0000, 25.0000,0.2001E-07,0.0000E+00,0.3286E-07,0.0000E+00,0.0000E+00,0.2826E-08,0.3617E-10  !  !END!
+   94! SRCNAM = 00094  !
+   94! X =  50.0000,  0.0000, 25.0000,0.1660E-07,0.0000E+00,0.2743E-07,0.0000E+00,0.0000E+00,0.2348E-08,0.3038E-10  !  !END!
+   95! SRCNAM = 00095  !
+   95! X =  50.0000,  0.0000, 25.0000,0.3858E-07,0.0000E+00,0.6329E-07,0.0000E+00,0.0000E+00,0.5471E-08,0.6944E-10  !  !END!
+   96! SRCNAM = 00096  !
+   96! X =  50.0000,  0.0000, 25.0000,0.2933E-07,0.0000E+00,0.4817E-07,0.0000E+00,0.0000E+00,0.4144E-08,0.5281E-10  !  !END!
+   97! SRCNAM = 00097  !
+   97! X =  50.0000,  0.0000, 25.0000,0.2892E-07,0.0000E+00,0.3988E-07,0.0000E+00,0.0000E+00,0.3940E-08,0.4413E-10  !  !END!
+   98! SRCNAM = 00098  !
+   98! X =  50.0000,  0.0000, 25.0000,0.7814E-07,0.0000E+00,0.1104E-06,0.0000E+00,0.0000E+00,0.1092E-07,0.1215E-09  !  !END!
+   99! SRCNAM = 00099  !
+   99! X =  50.0000,  0.0000, 25.0000,0.1833E-06,0.0000E+00,0.3359E-06,0.0000E+00,0.0000E+00,0.3786E-07,0.3696E-09  !  !END!
+  100! SRCNAM = 00100  !
+  100! X =  50.0000,  0.0000, 25.0000,0.1563E-06,0.0000E+00,0.2575E-06,0.0000E+00,0.0000E+00,0.2224E-07,0.2836E-09  !  !END!
+
+
+--------
+    a
+     Data for each source are treated as a separate input subgroup
+     and therefore must end with an input group terminator.
+    b
+     An emission rate must be entered for every pollutant modeled.
+     Enter emission rate of zero for secondary pollutants that are
+     modeled, but not emitted.  Units are specified by IARU 
+     (e.g. 1 for g/m**2/s).
+
+---------------
+Subgroup (14c)
+---------------
+
+           COORDINATES (UTM-km) FOR EACH VERTEX(4) OF EACH POLYGON
+           --------------------------------------------------------
+Source                                                               a
+ No.       Ordered list of X followed by list of Y, grouped by source
+------     ------------------------------------------------------------
+    1! SRCNAM = 00001  !
+    1  !  XVERT =   -305.132,  -301.132,  -301.132,  -305.132  !
+    1  !  YVERT =    237.090,   237.090,   233.090,   233.090  !
+! END !
+    2! SRCNAM = 00002  !
+    2  !  XVERT =   -229.132,  -225.132,  -225.132,  -229.132  !
+    2  !  YVERT =     61.090,    61.090,    57.090,    57.090  !
+! END !
+    3! SRCNAM = 00003  !
+    3  !  XVERT =   -121.132,  -117.132,  -117.132,  -121.132  !
+    3  !  YVERT =   -142.910,  -142.910,  -146.910,  -146.910  !
+! END !
+    4! SRCNAM = 00004  !
+    4  !  XVERT =   -169.132,  -165.132,  -165.132,  -169.132  !
+    4  !  YVERT =    -50.910,   -50.910,   -54.910,   -54.910  !
+! END !
+    5! SRCNAM = 00005  !
+    5  !  XVERT =    146.868,   150.868,   150.868,   146.868  !
+    5  !  YVERT =   -334.910,  -334.910,  -338.910,  -338.910  !
+! END !
+    6! SRCNAM = 00006  !
+    6  !  XVERT =   -249.132,  -245.132,  -245.132,  -249.132  !
+    6  !  YVERT =     61.090,    61.090,    57.090,    57.090  !
+! END !
+    7! SRCNAM = 00007  !
+    7  !  XVERT =   -105.132,  -101.132,  -101.132,  -105.132  !
+    7  !  YVERT =   -170.910,  -170.910,  -174.910,  -174.910  !
+! END !
+    8! SRCNAM = 00008  !
+    8  !  XVERT =   -193.132,  -189.132,  -189.132,  -193.132  !
+    8  !  YVERT =     73.090,    73.090,    69.090,    69.090  !
+! END !
+    9! SRCNAM = 00009  !
+    9  !  XVERT =   -161.132,  -157.132,  -157.132,  -161.132  !
+    9  !  YVERT =    117.090,   117.090,   113.090,   113.090  !
+! END !
+   10! SRCNAM = 00010  !
+   10  !  XVERT =    130.868,   134.868,   134.868,   130.868  !
+   10  !  YVERT =   -334.910,  -334.910,  -338.910,  -338.910  !
+! END !
+   11! SRCNAM = 00011  !
+   11  !  XVERT =   -137.132,  -133.132,  -133.132,  -137.132  !
+   11  !  YVERT =   -114.910,  -114.910,  -118.910,  -118.910  !
+! END !
+   12! SRCNAM = 00012  !
+   12  !  XVERT =   -169.132,  -165.132,  -165.132,  -169.132  !
+   12  !  YVERT =    -54.910,   -54.910,   -58.910,   -58.910  !
+! END !
+   13! SRCNAM = 00013  !
+   13  !  XVERT =   -313.132,  -309.132,  -309.132,  -313.132  !
+   13  !  YVERT =    257.090,   257.090,   253.090,   253.090  !
+! END !
+   14! SRCNAM = 00014  !
+   14  !  XVERT =    142.868,   146.868,   146.868,   142.868  !
+   14  !  YVERT =   -338.910,  -338.910,  -342.910,  -342.910  !
+! END !
+   15! SRCNAM = 00015  !
+   15  !  XVERT =   -237.132,  -233.132,  -233.132,  -237.132  !
+   15  !  YVERT =    113.090,   113.090,   109.090,   109.090  !
+! END !
+   16! SRCNAM = 00016  !
+   16  !  XVERT =    122.868,   126.868,   126.868,   122.868  !
+   16  !  YVERT =   -326.910,  -326.910,  -330.910,  -330.910  !
+! END !
+   17! SRCNAM = 00017  !
+   17  !  XVERT =   -201.132,  -197.132,  -197.132,  -201.132  !
+   17  !  YVERT =     81.090,    81.090,    77.090,    77.090  !
+! END !
+   18! SRCNAM = 00018  !
+   18  !  XVERT =   -193.132,  -189.132,  -189.132,  -193.132  !
+   18  !  YVERT =     53.090,    53.090,    49.090,    49.090  !
+! END !
+   19! SRCNAM = 00019  !
+   19  !  XVERT =    106.868,   110.868,   110.868,   106.868  !
+   19  !  YVERT =   -314.910,  -314.910,  -318.910,  -318.910  !
+! END !
+   20! SRCNAM = 00020  !
+   20  !  XVERT =     86.868,    90.868,    90.868,    86.868  !
+   20  !  YVERT =   -306.910,  -306.910,  -310.910,  -310.910  !
+! END !
+   21! SRCNAM = 00021  !
+   21  !  XVERT =   -181.132,  -177.132,  -177.132,  -181.132  !
+   21  !  YVERT =     89.090,    89.090,    85.090,    85.090  !
+! END !
+   22! SRCNAM = 00022  !
+   22  !  XVERT =    134.868,   138.868,   138.868,   134.868  !
+   22  !  YVERT =   -330.910,  -330.910,  -334.910,  -334.910  !
+! END !
+   23! SRCNAM = 00023  !
+   23  !  XVERT =    178.868,   182.868,   182.868,   178.868  !
+   23  !  YVERT =   -354.910,  -354.910,  -358.910,  -358.910  !
+! END !
+   24! SRCNAM = 00024  !
+   24  !  XVERT =   -193.132,  -189.132,  -189.132,  -193.132  !
+   24  !  YVERT =     61.090,    61.090,    57.090,    57.090  !
+! END !
+   25! SRCNAM = 00025  !
+   25  !  XVERT =   -201.132,  -197.132,  -197.132,  -201.132  !
+   25  !  YVERT =     77.090,    77.090,    73.090,    73.090  !
+! END !
+   26! SRCNAM = 00026  !
+   26  !  XVERT =   -185.132,  -181.132,  -181.132,  -185.132  !
+   26  !  YVERT =      1.090,     1.090,    -2.910,    -2.910  !
+! END !
+   27! SRCNAM = 00027  !
+   27  !  XVERT =   -181.132,  -177.132,  -177.132,  -181.132  !
+   27  !  YVERT =    -10.910,   -10.910,   -14.910,   -14.910  !
+! END !
+   28! SRCNAM = 00028  !
+   28  !  XVERT =   -121.132,  -117.132,  -117.132,  -121.132  !
+   28  !  YVERT =   -138.910,  -138.910,  -142.910,  -142.910  !
+! END !
+   29! SRCNAM = 00029  !
+   29  !  XVERT =   -313.132,  -309.132,  -309.132,  -313.132  !
+   29  !  YVERT =    261.090,   261.090,   257.090,   257.090  !
+! END !
+   30! SRCNAM = 00030  !
+   30  !  XVERT =     54.868,    58.868,    58.868,    54.868  !
+   30  !  YVERT =   -302.910,  -302.910,  -306.910,  -306.910  !
+! END !
+   31! SRCNAM = 00031  !
+   31  !  XVERT =   -293.132,  -289.132,  -289.132,  -293.132  !
+   31  !  YVERT =    213.090,   213.090,   209.090,   209.090  !
+! END !
+   32! SRCNAM = 00032  !
+   32  !  XVERT =   -217.132,  -213.132,  -213.132,  -217.132  !
+   32  !  YVERT =    101.090,   101.090,    97.090,    97.090  !
+! END !
+   33! SRCNAM = 00033  !
+   33  !  XVERT =   -281.132,  -277.132,  -277.132,  -281.132  !
+   33  !  YVERT =    185.090,   185.090,   181.090,   181.090  !
+! END !
+   34! SRCNAM = 00034  !
+   34  !  XVERT =   -321.132,  -317.132,  -317.132,  -321.132  !
+   34  !  YVERT =    281.090,   281.090,   277.090,   277.090  !
+! END !
+   35! SRCNAM = 00035  !
+   35  !  XVERT =   -349.132,  -345.132,  -345.132,  -349.132  !
+   35  !  YVERT =    545.090,   545.090,   541.090,   541.090  !
+! END !
+   36! SRCNAM = 00036  !
+   36  !  XVERT =    130.868,   134.868,   134.868,   130.868  !
+   36  !  YVERT =   -330.910,  -330.910,  -334.910,  -334.910  !
+! END !
+   37! SRCNAM = 00037  !
+   37  !  XVERT =    -29.132,   -25.132,   -25.132,   -29.132  !
+   37  !  YVERT =   -278.910,  -278.910,  -282.910,  -282.910  !
+! END !
+   38! SRCNAM = 00038  !
+   38  !  XVERT =   -261.132,  -257.132,  -257.132,  -261.132  !
+   38  !  YVERT =    141.090,   141.090,   137.090,   137.090  !
+! END !
+   39! SRCNAM = 00039  !
+   39  !  XVERT =     18.868,    22.868,    22.868,    18.868  !
+   39  !  YVERT =   -298.910,  -298.910,  -302.910,  -302.910  !
+! END !
+   40! SRCNAM = 00040  !
+   40  !  XVERT =   -349.132,  -345.132,  -345.132,  -349.132  !
+   40  !  YVERT =    541.090,   541.090,   537.090,   537.090  !
+! END !
+   41! SRCNAM = 00041  !
+   41  !  XVERT =   -305.132,  -301.132,  -301.132,  -305.132  !
+   41  !  YVERT =    241.090,   241.090,   237.090,   237.090  !
+! END !
+   42! SRCNAM = 00042  !
+   42  !  XVERT =    -53.132,   -49.132,   -49.132,   -53.132  !
+   42  !  YVERT =   -274.910,  -274.910,  -278.910,  -278.910  !
+! END !
+   43! SRCNAM = 00043  !
+   43  !  XVERT =    -33.132,   -29.132,   -29.132,   -33.132  !
+   43  !  YVERT =   -274.910,  -274.910,  -278.910,  -278.910  !
+! END !
+   44! SRCNAM = 00044  !
+   44  !  XVERT =    206.868,   210.868,   210.868,   206.868  !
+   44  !  YVERT =   -354.910,  -354.910,  -358.910,  -358.910  !
+! END !
+   45! SRCNAM = 00045  !
+   45  !  XVERT =    198.868,   202.868,   202.868,   198.868  !
+   45  !  YVERT =   -358.910,  -358.910,  -362.910,  -362.910  !
+! END !
+   46! SRCNAM = 00046  !
+   46  !  XVERT =   -193.132,  -189.132,  -189.132,  -193.132  !
+   46  !  YVERT =     77.090,    77.090,    73.090,    73.090  !
+! END !
+   47! SRCNAM = 00047  !
+   47  !  XVERT =   -253.132,  -249.132,  -249.132,  -253.132  !
+   47  !  YVERT =     61.090,    61.090,    57.090,    57.090  !
+! END !
+   48! SRCNAM = 00048  !
+   48  !  XVERT =     74.868,    78.868,    78.868,    74.868  !
+   48  !  YVERT =   -306.910,  -306.910,  -310.910,  -310.910  !
+! END !
+   49! SRCNAM = 00049  !
+   49  !  XVERT =   -261.132,  -257.132,  -257.132,  -261.132  !
+   49  !  YVERT =    141.090,   141.090,   137.090,   137.090  !
+! END !
+   50! SRCNAM = 00050  !
+   50  !  XVERT =   -193.132,  -189.132,  -189.132,  -193.132  !
+   50  !  YVERT =     61.090,    61.090,    57.090,    57.090  !
+! END !
+   51! SRCNAM = 00051  !
+   51  !  XVERT =   -189.132,  -185.132,  -185.132,  -189.132  !
+   51  !  YVERT =     13.090,    13.090,     9.090,     9.090  !
+! END !
+   52! SRCNAM = 00052  !
+   52  !  XVERT =   -177.132,  -173.132,  -173.132,  -177.132  !
+   52  !  YVERT =     89.090,    89.090,    85.090,    85.090  !
+! END !
+   53! SRCNAM = 00053  !
+   53  !  XVERT =   -265.132,  -261.132,  -261.132,  -265.132  !
+   53  !  YVERT =     81.090,    81.090,    77.090,    77.090  !
+! END !
+   54! SRCNAM = 00054  !
+   54  !  XVERT =   -337.132,  -333.132,  -333.132,  -337.132  !
+   54  !  YVERT =    325.090,   325.090,   321.090,   321.090  !
+! END !
+   55! SRCNAM = 00055  !
+   55  !  XVERT =   -205.132,  -201.132,  -201.132,  -205.132  !
+   55  !  YVERT =     77.090,    77.090,    73.090,    73.090  !
+! END !
+   56! SRCNAM = 00056  !
+   56  !  XVERT =     78.868,    82.868,    82.868,    78.868  !
+   56  !  YVERT =   -306.910,  -306.910,  -310.910,  -310.910  !
+! END !
+   57! SRCNAM = 00057  !
+   57  !  XVERT =     14.868,    18.868,    18.868,    14.868  !
+   57  !  YVERT =   -294.910,  -294.910,  -298.910,  -298.910  !
+! END !
+   58! SRCNAM = 00058  !
+   58  !  XVERT =    -37.132,   -33.132,   -33.132,   -37.132  !
+   58  !  YVERT =   -274.910,  -274.910,  -278.910,  -278.910  !
+! END !
+   59! SRCNAM = 00059  !
+   59  !  XVERT =    202.868,   206.868,   206.868,   202.868  !
+   59  !  YVERT =   -362.910,  -362.910,  -366.910,  -366.910  !
+! END !
+   60! SRCNAM = 00060  !
+   60  !  XVERT =    150.868,   154.868,   154.868,   150.868  !
+   60  !  YVERT =   -362.910,  -362.910,  -366.910,  -366.910  !
+! END !
+   61! SRCNAM = 00061  !
+   61  !  XVERT =    166.868,   170.868,   170.868,   166.868  !
+   61  !  YVERT =   -362.910,  -362.910,  -366.910,  -366.910  !
+! END !
+   62! SRCNAM = 00062  !
+   62  !  XVERT =    102.868,   106.868,   106.868,   102.868  !
+   62  !  YVERT =   -318.910,  -318.910,  -322.910,  -322.910  !
+! END !
+   63! SRCNAM = 00063  !
+   63  !  XVERT =     46.868,    50.868,    50.868,    46.868  !
+   63  !  YVERT =   -298.910,  -298.910,  -302.910,  -302.910  !
+! END !
+   64! SRCNAM = 00064  !
+   64  !  XVERT =    230.868,   234.868,   234.868,   230.868  !
+   64  !  YVERT =   -414.910,  -414.910,  -418.910,  -418.910  !
+! END !
+   65! SRCNAM = 00065  !
+   65  !  XVERT =   -189.132,  -185.132,  -185.132,  -189.132  !
+   65  !  YVERT =     21.090,    21.090,    17.090,    17.090  !
+! END !
+   66! SRCNAM = 00066  !
+   66  !  XVERT =   -137.132,  -133.132,  -133.132,  -137.132  !
+   66  !  YVERT =   -110.910,  -110.910,  -114.910,  -114.910  !
+! END !
+   67! SRCNAM = 00067  !
+   67  !  XVERT =      6.868,    10.868,    10.868,     6.868  !
+   67  !  YVERT =   -294.910,  -294.910,  -298.910,  -298.910  !
+! END !
+   68! SRCNAM = 00068  !
+   68  !  XVERT =    190.868,   194.868,   194.868,   190.868  !
+   68  !  YVERT =   -362.910,  -362.910,  -366.910,  -366.910  !
+! END !
+   69! SRCNAM = 00069  !
+   69  !  XVERT =   -165.132,  -161.132,  -161.132,  -165.132  !
+   69  !  YVERT =     93.090,    93.090,    89.090,    89.090  !
+! END !
+   70! SRCNAM = 00070  !
+   70  !  XVERT =   -221.132,  -217.132,  -217.132,  -221.132  !
+   70  !  YVERT =     73.090,    73.090,    69.090,    69.090  !
+! END !
+   71! SRCNAM = 00071  !
+   71  !  XVERT =   -121.132,  -117.132,  -117.132,  -121.132  !
+   71  !  YVERT =   -142.910,  -142.910,  -146.910,  -146.910  !
+! END !
+   72! SRCNAM = 00072  !
+   72  !  XVERT =   -337.132,  -333.132,  -333.132,  -337.132  !
+   72  !  YVERT =    321.090,   321.090,   317.090,   317.090  !
+! END !
+   73! SRCNAM = 00073  !
+   73  !  XVERT =   -277.132,  -273.132,  -273.132,  -277.132  !
+   73  !  YVERT =    181.090,   181.090,   177.090,   177.090  !
+! END !
+   74! SRCNAM = 00074  !
+   74  !  XVERT =   -309.132,  -305.132,  -305.132,  -309.132  !
+   74  !  YVERT =    249.090,   249.090,   245.090,   245.090  !
+! END !
+   75! SRCNAM = 00075  !
+   75  !  XVERT =     70.868,    74.868,    74.868,    70.868  !
+   75  !  YVERT =   -310.910,  -310.910,  -314.910,  -314.910  !
+! END !
+   76! SRCNAM = 00076  !
+   76  !  XVERT =     42.868,    46.868,    46.868,    42.868  !
+   76  !  YVERT =   -302.910,  -302.910,  -306.910,  -306.910  !
+! END !
+   77! SRCNAM = 00077  !
+   77  !  XVERT =   -173.132,  -169.132,  -169.132,  -173.132  !
+   77  !  YVERT =    -34.910,   -34.910,   -38.910,   -38.910  !
+! END !
+   78! SRCNAM = 00078  !
+   78  !  XVERT =   -281.132,  -277.132,  -277.132,  -281.132  !
+   78  !  YVERT =    185.090,   185.090,   181.090,   181.090  !
+! END !
+   79! SRCNAM = 00079  !
+   79  !  XVERT =   -193.132,  -189.132,  -189.132,  -193.132  !
+   79  !  YVERT =     77.090,    77.090,    73.090,    73.090  !
+! END !
+   80! SRCNAM = 00080  !
+   80  !  XVERT =   -225.132,  -221.132,  -221.132,  -225.132  !
+   80  !  YVERT =     73.090,    73.090,    69.090,    69.090  !
+! END !
+   81! SRCNAM = 00081  !
+   81  !  XVERT =    -41.132,   -37.132,   -37.132,   -41.132  !
+   81  !  YVERT =   -270.910,  -270.910,  -274.910,  -274.910  !
+! END !
+   82! SRCNAM = 00082  !
+   82  !  XVERT =   -113.132,  -109.132,  -109.132,  -113.132  !
+   82  !  YVERT =   -158.910,  -158.910,  -162.910,  -162.910  !
+! END !
+   83! SRCNAM = 00083  !
+   83  !  XVERT =     86.868,    90.868,    90.868,    86.868  !
+   83  !  YVERT =   -310.910,  -310.910,  -314.910,  -314.910  !
+! END !
+   84! SRCNAM = 00084  !
+   84  !  XVERT =   -193.132,  -189.132,  -189.132,  -193.132  !
+   84  !  YVERT =     65.090,    65.090,    61.090,    61.090  !
+! END !
+   85! SRCNAM = 00085  !
+   85  !  XVERT =   -349.132,  -345.132,  -345.132,  -349.132  !
+   85  !  YVERT =    517.090,   517.090,   513.090,   513.090  !
+! END !
+   86! SRCNAM = 00086  !
+   86  !  XVERT =   -109.132,  -105.132,  -105.132,  -109.132  !
+   86  !  YVERT =   -162.910,  -162.910,  -166.910,  -166.910  !
+! END !
+   87! SRCNAM = 00087  !
+   87  !  XVERT =     26.868,    30.868,    30.868,    26.868  !
+   87  !  YVERT =   -298.910,  -298.910,  -302.910,  -302.910  !
+! END !
+   88! SRCNAM = 00088  !
+   88  !  XVERT =    134.868,   138.868,   138.868,   134.868  !
+   88  !  YVERT =   -334.910,  -334.910,  -338.910,  -338.910  !
+! END !
+   89! SRCNAM = 00089  !
+   89  !  XVERT =   -217.132,  -213.132,  -213.132,  -217.132  !
+   89  !  YVERT =     77.090,    77.090,    73.090,    73.090  !
+! END !
+   90! SRCNAM = 00090  !
+   90  !  XVERT =     -1.132,     2.868,     2.868,    -1.132  !
+   90  !  YVERT =   -290.910,  -290.910,  -294.910,  -294.910  !
+! END !
+   91! SRCNAM = 00091  !
+   91  !  XVERT =   -145.132,  -141.132,  -141.132,  -145.132  !
+   91  !  YVERT =    -98.910,   -98.910,  -102.910,  -102.910  !
+! END !
+   92! SRCNAM = 00092  !
+   92  !  XVERT =    114.868,   118.868,   118.868,   114.868  !
+   92  !  YVERT =   -318.910,  -318.910,  -322.910,  -322.910  !
+! END !
+   93! SRCNAM = 00093  !
+   93  !  XVERT =   -133.132,  -129.132,  -129.132,  -133.132  !
+   93  !  YVERT =   -118.910,  -118.910,  -122.910,  -122.910  !
+! END !
+   94! SRCNAM = 00094  !
+   94  !  XVERT =      2.868,     6.868,     6.868,     2.868  !
+   94  !  YVERT =   -286.910,  -286.910,  -290.910,  -290.910  !
+! END !
+   95! SRCNAM = 00095  !
+   95  !  XVERT =    -33.132,   -29.132,   -29.132,   -33.132  !
+   95  !  YVERT =   -282.910,  -282.910,  -286.910,  -286.910  !
+! END !
+   96! SRCNAM = 00096  !
+   96  !  XVERT =   -193.132,  -189.132,  -189.132,  -193.132  !
+   96  !  YVERT =     41.090,    41.090,    37.090,    37.090  !
+! END !
+   97! SRCNAM = 00097  !
+   97  !  XVERT =    302.868,   306.868,   306.868,   302.868  !
+   97  !  YVERT =   -474.910,  -474.910,  -478.910,  -478.910  !
+! END !
+   98! SRCNAM = 00098  !
+   98  !  XVERT =    206.868,   210.868,   210.868,   206.868  !
+   98  !  YVERT =   -366.910,  -366.910,  -370.910,  -370.910  !
+! END !
+   99! SRCNAM = 00099  !
+   99  !  XVERT =    206.868,   210.868,   210.868,   206.868  !
+   99  !  YVERT =   -358.910,  -358.910,  -362.910,  -362.910  !
+! END !
+  100! SRCNAM = 00100  !
+  100  !  XVERT =   -185.132,  -181.132,  -181.132,  -185.132  !
+  100  !  YVERT =      5.090,     5.090,     1.090,     1.090  !
+! END !
+
+
+--------
+    a
+     Data for each source are treated as a separate input subgroup
+     and therefore must end with an input group terminator.
+
+
+---------------
+Subgroup (14d)
+---------------
+                                               a
+          AREA SOURCE: VARIABLE EMISSIONS DATA
+          --------------------------------------
+
+     Use this subgroup to describe temporal variations in the emission
+     rates given in 14b.  Factors entered multiply the rates in 14b.
+     Skip sources here that have constant emissions.  For more elaborate
+     variation in source parameters, use BAEMARB.DAT and NAR2 > 0.
+
+     IVARY determines the type of variation, and is source-specific:
+     (IVARY)                                Default: 0
+           0 =       Constant
+           1 =       Diurnal cycle (24 scaling factors: hours 1-24)
+           2 =       Monthly cycle (12 scaling factors: months 1-12)
+           3 =       Hour & Season (4 groups of 24 hourly scaling factors,
+                                    where first group is DEC-JAN-FEB)
+           4 =       Speed & Stab. (6 groups of 6 scaling factors, where
+                                    first group is Stability Class A,
+                                    and the speed classes have upper
+                                    bounds (m/s) defined in Group 12
+           5 =       Temperature   (12 scaling factors, where temperature
+                                    classes have upper bounds (C) of:
+                                    0, 5, 10, 15, 20, 25, 30, 35, 40,
+                                    45, 50, 50+)
+
+
+
+--------
+    a
+     Data for each species are treated as a separate input subgroup
+     and therefore must end with an input group terminator.
+
+
+-------------------------------------------------------------------------------
+
+INPUT GROUPS: 15a, 15b, 15c -- Line source parameters
+---------------------------
+
+---------------
+Subgroup (15a)
+---------------
+
+     Number of buoyant line sources
+     with variable location and emission
+     parameters (NLN2)                              No default  !  NLN2 =  0   !
+
+     (If NLN2 > 0, ALL parameter data for
+      these sources are read from the file: LNEMARB.DAT)
+
+     Number of buoyant line sources (NLINES)        No default   ! NLINES =  0  !
+
+     Units used for line source
+     emissions below                (ILNU)          Default: 1  !  ILNU =   1  !
+           1 =        g/s
+           2 =       kg/hr
+           3 =       lb/hr
+           4 =     tons/yr
+           5 =     Odour Unit * m**3/s  (vol. flux of odour compound)
+           6 =     Odour Unit * m**3/min
+           7 =     metric tons/yr
+
+     Number of source-species
+     combinations with variable
+     emissions scaling factors
+     provided below in (15c)        (NSLN1) Default: 0  !  NSLN1 =  0  !
+
+     Maximum number of segments used to model
+     each line (MXNSEG)                             Default: 7   ! MXNSEG =  7  !
+
+     The following variables are required only if NLINES > 0.  They are
+     used in the buoyant line source plume rise calculations.
+
+        Number of distances at which                Default: 6   ! NLRISE =  6  !
+        transitional rise is computed
+
+        Average building length (XL)                No default   ! XL = .0 !
+                                                    (in meters)
+
+        Average building height (HBL)               No default   ! HBL = .0 !
+                                                    (in meters)
+
+        Average building width (WBL)                No default   ! WBL = .0 !
+                                                    (in meters)
+
+        Average line source width (WML)             No default   ! WML = .0 !
+                                                    (in meters)
+
+        Average separation between buildings (DXL)  No default   ! DXL = .0 !
+                                                    (in meters)
+
+        Average buoyancy parameter (FPRIMEL)        No default   ! FPRIMEL = .0 !
+                                                    (in m**4/s**3)
+
+!END!
+
+---------------
+Subgroup (15b)
+---------------
+
+          BUOYANT LINE SOURCE: CONSTANT DATA
+          ----------------------------------
+                                                                                          a
+Source     Beg. X      Beg. Y      End. X    End. Y     Release    Base        Emission
+ No.     Coordinate  Coordinate  Coordinate Coordinate  Height    Elevation      Rates
+            (km)        (km)        (km)       (km)       (m)       (m)          
+------   ----------  ----------  ---------  ----------  -------   ---------    ---------
+
+--------
+
+    a
+     Data for each source are treated as a separate input subgroup
+     and therefore must end with an input group terminator.
+
+    b
+     An emission rate must be entered for every pollutant modeled.
+     Enter emission rate of zero for secondary pollutants that are
+     modeled, but not emitted.  Units are specified by ILNTU 
+     (e.g. 1 for g/s).
+
+---------------
+Subgroup (15c)
+---------------
+                                                       a
+          BUOYANT LINE SOURCE: VARIABLE EMISSIONS DATA
+          ----------------------------------------------
+
+     Use this subgroup to describe temporal variations in the emission
+     rates given in 15b.  Factors entered multiply the rates in 15b.
+     Skip sources here that have constant emissions.
+
+     IVARY determines the type of variation, and is source-specific:
+     (IVARY)                                Default: 0
+           0 =       Constant
+           1 =       Diurnal cycle (24 scaling factors: hours 1-24)
+           2 =       Monthly cycle (12 scaling factors: months 1-12)
+           3 =       Hour & Season (4 groups of 24 hourly scaling factors,
+                                    where first group is DEC-JAN-FEB)
+           4 =       Speed & Stab. (6 groups of 6 scaling factors, where
+                                    first group is Stability Class A,
+                                    and the speed classes have upper
+                                    bounds (m/s) defined in Group 12
+           5 =       Temperature   (12 scaling factors, where temperature
+                                    classes have upper bounds (C) of:
+                                    0, 5, 10, 15, 20, 25, 30, 35, 40,
+                                    45, 50, 50+)
+
+
+
+--------
+    a
+     Data for each species are treated as a separate input subgroup
+     and therefore must end with an input group terminator.
+
+
+-------------------------------------------------------------------------------
+
+
+INPUT GROUPS: 16a, 16b, 16c -- Volume source parameters
+---------------------------
+
+---------------
+Subgroup (16a)
+---------------
+
+     Number of volume sources with
+     parameters provided in 16b,c (NVL1)     No default  !  NVL1 =  0   !
+
+     Units used for volume source
+     emissions below in 16b       (IVLU)     Default: 1  !  IVLU =   1  !
+           1 =        g/s
+           2 =       kg/hr
+           3 =       lb/hr
+           4 =     tons/yr
+           5 =     Odour Unit * m**3/s  (vol. flux of odour compound)
+           6 =     Odour Unit * m**3/min
+           7 =     metric tons/yr
+
+     Number of source-species
+     combinations with variable
+     emissions scaling factors
+     provided below in (16c)      (NSVL1)    Default: 0  !  NSVL1 =  0  !
+
+     Number of volume sources with
+     variable location and emission
+     parameters                   (NVL2)     No default  !  NVL2 =   0   !
+
+     (If NVL2 > 0, ALL parameter data for
+      these sources are read from the VOLEMARB.DAT file(s) )
+
+!END!
+
+---------------
+Subgroup (16b)
+---------------
+                                        a
+           VOLUME SOURCE: CONSTANT DATA
+           ------------------------------
+                                                                               b
+        X UTM      Y UTM      Effect.    Base     Initial    Initial    Emission
+     Coordinate  Coordinate   Height   Elevation  Sigma y    Sigma z     Rates
+        (km)       (km)         (m)       (m)        (m)       (m)      
+     ----------  ----------   ------    ------    --------   --------   --------
+
+
+--------
+    a
+     Data for each source are treated as a separate input subgroup
+     and therefore must end with an input group terminator.
+
+    b
+     An emission rate must be entered for every pollutant modeled.
+     Enter emission rate of zero for secondary pollutants that are
+     modeled, but not emitted.  Units are specified by IVLU 
+     (e.g. 1 for g/s).
+
+---------------
+Subgroup (16c)
+---------------
+                                                 a
+          VOLUME SOURCE: VARIABLE EMISSIONS DATA
+          ----------------------------------------
+
+     Use this subgroup to describe temporal variations in the emission
+     rates given in 16b.  Factors entered multiply the rates in 16b.
+     Skip sources here that have constant emissions.  For more elaborate
+     variation in source parameters, use VOLEMARB.DAT and NVL2 > 0.
+
+     IVARY determines the type of variation, and is source-specific:
+     (IVARY)                                Default: 0
+           0 =       Constant
+           1 =       Diurnal cycle (24 scaling factors: hours 1-24)
+           2 =       Monthly cycle (12 scaling factors: months 1-12)
+           3 =       Hour & Season (4 groups of 24 hourly scaling factors,
+                                    where first group is DEC-JAN-FEB)
+           4 =       Speed & Stab. (6 groups of 6 scaling factors, where
+                                    first group is Stability Class A,
+                                    and the speed classes have upper
+                                    bounds (m/s) defined in Group 12
+           5 =       Temperature   (12 scaling factors, where temperature
+                                    classes have upper bounds (C) of:
+                                    0, 5, 10, 15, 20, 25, 30, 35, 40,
+                                    45, 50, 50+)
+
+
+
+--------
+    a
+     Data for each species are treated as a separate input subgroup
+     and therefore must end with an input group terminator.
+
+
+-------------------------------------------------------------------------------
+
+INPUT GROUPS: 17a & 17b -- Non-gridded (discrete) receptor information
+-----------------------
+
+---------------
+Subgroup (17a)
+---------------
+
+     Number of non-gridded receptors (NREC)  No default  !  NREC =  0   !
+
+!END!
+
+---------------
+Subgroup (17b)
+---------------
+                                               a
+           NON-GRIDDED (DISCRETE) RECEPTOR DATA
+           ------------------------------------
+
+                  X UTM       Y UTM        Ground        Height   b
+Receptor       Coordinate   Coordinate    Elevation   Above Ground
+  No.             (km)        (km)           (m)           (m)
+--------       ----------   ----------    ---------   ------------
+
+
+
+-------------
+    a
+     Data for each receptor are treated as a separate input subgroup
+     and therefore must end with an input group terminator.
+
+    b
+     Receptor height above ground is optional.  If no value is entered,
+     the receptor is placed on the ground.
+
+

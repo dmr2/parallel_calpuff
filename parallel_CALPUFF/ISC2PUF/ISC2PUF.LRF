@@ -1,0 +1,1 @@
+ISC2PUF.obj PCCODE.obj CONV2CAL.obj SETUP.obj COSET.obj SOSET.obj RESET.obj MESET.obj TGSET.obj OUSET.obj METEXT.obj -o0 -out ISC2PUF.EXE

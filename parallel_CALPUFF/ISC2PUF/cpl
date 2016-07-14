@@ -1,0 +1,13 @@
+Lahey/Fujitsu Fortran 95 Express Release 5.60h  S/N: X9355646  
+Copyright (C) 1994-2002 Lahey Computer Systems.  All rights reserved.
+Copyright (C) 1998-2002 FUJITSU LIMITED. All rights reserved.
+Options:
+-nap           -nc            -nchk          -nchkglobal    -dal 
+-ndbl          -ndll          -nf95          -nfix          -ng 
+-nin           -ninfo         -li            -nlst          -nlong 
+-maxfatals 50  -o0            -npause        -nprivate      -npca 
+-nquad         -nsav          -nstaticlink   -stchk         -tp 
+-trace         -ntrap         -w             -winconsole    -nwo 
+-nxref         -zero 
+
+ERROR --  No source or object files specified.
