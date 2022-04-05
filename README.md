@@ -2,7 +2,7 @@ PARALLEL CALPUFF TUTORIAL FOR ARB
 
 Written by: D.J. Rasmussen   December 2012
 	    UC-Davis 
-	    dmr@ucdavis.edu
+	    mercury.international2@gmail.com
 
 
 These are instructions for running an 8-day test simulation with 100 area sources as defined in Section 2 of the parallel CAPUFF ARB report.
